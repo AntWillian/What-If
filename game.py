@@ -9,7 +9,12 @@ class Game:
 
     def __init__(self):
 
-        self.character_spritesheet = Spritesheet("assets/character.png")
+        #Player characters
+        self.player_walk_left = Spritesheet("assets/player/andando_esquerda.png")
+        self.player_walk_right = Spritesheet("assets/player/andando_direita.png")
+        self.player_walk_back_right = Spritesheet("assets/player/frente_e_costa.png")
+
+
         self.terrain_spritesheet = Spritesheet("assets/terrain.png")
         self.enemies_spritesheet = Spritesheet("assets/enemy.png")
 
@@ -17,6 +22,10 @@ class Game:
         self.blocks = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
+        self.cracks = pygame.sprite.LayeredUpdates()
+
+        #variavel que verifica se mudou de tela
+        self.change_scene = False
 
         self.createTilemap()
 
@@ -30,7 +39,8 @@ class Game:
                     Enemy(self, j, i)
                 if column == "P":
                     Player(self, j, i)
-
+                if column == "C":
+                    Crack(self, j, i)
 
 
     def events(self):

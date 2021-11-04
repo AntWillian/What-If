@@ -18,6 +18,8 @@ class Crack1:
         self.inimigo_esquilo = Spritesheet("assets/inimigos/Esquilo_fofinho.png")
         self.inimigo_urso = Spritesheet("assets/inimigos/Ursinho_fofinho.png")
         self.inimigo_coelho = Spritesheet("assets/inimigos/coelho_fofinho.png")
+        self.cristal = Spritesheet("assets/crystal.png")
+        self.poder = Spritesheet("assets/pina_colada.png")
 
         self.terrain_spritesheet = Spritesheet("assets/tilemapsMario.png")
 
@@ -26,13 +28,23 @@ class Crack1:
         self.troncos = pygame.sprite.LayeredUpdates()
         self.plataforma = pygame.sprite.LayeredUpdates()
 
+        #inimigo
+        self.inimigo = pygame.sprite.LayeredUpdates()
+
         self.blocoQuebraveis = pygame.sprite.LayeredUpdates()
         self.blocoEspeciaisMoedas = pygame.sprite.LayeredUpdates()
 
         # variavel que verifica se mudou de tela
         self.change_scene = False
 
+
+        #self.poder_tiro = Tiro(self, 0, 0)
+
         self.createTilemap()
+
+        self.tirosCriados = 0
+
+        self.moedasColetadas = 0
 
     def createTilemap(self):
         for i, row in enumerate(crak1):
@@ -56,6 +68,15 @@ class Crack1:
                     self.blocoMoedas = Bloco_especial(self, j, i, "H")
                 if column == "O":
                     Bloco_solido(self, j, i, "O")
+
+                #Coletaveis
+                if column == "M":
+                    Moeda(self, j, i, True)
+                if column == "A":
+                    Cristal(self, j, i)
+                if column == "I":
+                    Poder(self, j, i)
+
                 if column == "P":
                    self.player = Player_platform(self, j, i)
 
@@ -69,6 +90,8 @@ class Crack1:
 
     def events(self, events):
         self.player.events(events)
+
+
 
     def update(self):
         self.all_sprites.update()

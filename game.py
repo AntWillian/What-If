@@ -16,7 +16,6 @@ class Game:
 
 
         self.terrain_spritesheet = Spritesheet("assets/terrain.png")
-        self.enemies_spritesheet = Spritesheet("assets/enemy.png")
 
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()
@@ -35,8 +34,6 @@ class Game:
                 Ground(self, j, i)
                 if column == "B":
                     Block(self, j, i)
-                if column == "E":
-                    Enemy(self, j, i)
                 if column == "P":
                     Player(self, j, i)
                 if column == "C":

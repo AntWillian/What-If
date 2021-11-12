@@ -27,9 +27,13 @@ class Crack1:
         self.blocks = pygame.sprite.LayeredUpdates()
         self.troncos = pygame.sprite.LayeredUpdates()
         self.plataforma = pygame.sprite.LayeredUpdates()
+        self.bloco_solido_moeda = pygame.sprite.LayeredUpdates()
+        self.coletar_moeda = pygame.sprite.LayeredUpdates()
+        self.coletar_cristal = pygame.sprite.LayeredUpdates()
 
         #inimigo
         self.inimigo = pygame.sprite.LayeredUpdates()
+        self.inimigo_pulo = pygame.sprite.LayeredUpdates()
 
         self.blocoQuebraveis = pygame.sprite.LayeredUpdates()
         self.blocoEspeciaisMoedas = pygame.sprite.LayeredUpdates()
@@ -71,7 +75,7 @@ class Crack1:
 
                 #Coletaveis
                 if column == "M":
-                    Moeda(self, j, i, True)
+                    Moeda(self, j, i, True, False)
                 if column == "A":
                     Cristal(self, j, i)
                 if column == "I":
@@ -90,8 +94,6 @@ class Crack1:
 
     def events(self, events):
         self.player.events(events)
-
-
 
     def update(self):
         self.all_sprites.update()

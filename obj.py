@@ -424,6 +424,27 @@ class Bloco_solido(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+class Bloco_solido_moeda(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+
+        self.game = game
+        self._layer = BLOCK_LAYER
+        self.groups = self.game.all_sprites, self.game.bloco_solido_moeda
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x
+        self.y = y
+        self.width = TILESIZE_CRACK1
+        self.height = TILESIZE_CRACK1
+
+
+        self.image = self.game.terrain_spritesheet.get_sprite(160, 67, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+
 class Bloco_especial(pygame.sprite.Sprite):
     def __init__(self, game, x, y, name):
 
@@ -452,7 +473,7 @@ class Inimigo_esquilo(pygame.sprite.Sprite):
 
         self.game = game
         self._layer = ENEMY_LAYER
-        self.groups = self.game.all_sprites, self.game.inimigo
+        self.groups = self.game.all_sprites, self.game.inimigo_pulo
         pygame.sprite.Sprite.__init__(self, self.groups)
 
         self.salto = 0
@@ -646,15 +667,17 @@ class Inimigo_coelho(pygame.sprite.Sprite):
                     self.animation_loop = 1
 
 class Moeda(pygame.sprite.Sprite):
-    def __init__(self, game, x, y, p):
+    def __init__(self, game, x, y, p, temp):
 
         self.game = game
         self._layer = ENEMY_LAYER
-        self.groups = self.game.all_sprites
+        self.groups = self.game.all_sprites,  self.game.coletar_moeda
         pygame.sprite.Sprite.__init__(self, self.groups)
 
         self.width = TILESIZE_CRACK1
         self.height = TILESIZE_CRACK1
+
+        self.temp = temp
 
         if p:
             self.x = x * TILESIZE_CRACK1
@@ -673,9 +696,16 @@ class Moeda(pygame.sprite.Sprite):
 
         self.ticks = 0
         self.animation_loop = 1
+        self.tempMoeda = 0
 
     def update(self):
         self.animate()
+
+        if self.temp:
+            self.tempMoeda += 1
+            self.rect.y -= 1
+            if self.tempMoeda >= 10:
+                self.kill()
 
 
     def animate(self):
@@ -694,7 +724,7 @@ class Cristal(pygame.sprite.Sprite):
 
         self.game = game
         self._layer = ENEMY_LAYER
-        self.groups = self.game.all_sprites
+        self.groups = self.game.all_sprites, self.game.coletar_cristal
         pygame.sprite.Sprite.__init__(self, self.groups)
 
         self.x = x * TILESIZE_CRACK1
@@ -775,6 +805,7 @@ class Tiro(pygame.sprite.Sprite):
         self.colisao_troncos()
         self.colisao_plataforma()
         self.colisao_inimigo()
+        self.colisao_inimigoQpula()
 
     def colisao_troncos(self):
 
@@ -796,6 +827,11 @@ class Tiro(pygame.sprite.Sprite):
 
     def colisao_inimigo(self):
         hits = pygame.sprite.spritecollide(self, self.game.inimigo, True)
+        if hits:
+            self.kill()
+
+    def colisao_inimigoQpula(self):
+        hits = pygame.sprite.spritecollide(self, self.game.inimigo_pulo, True)
         if hits:
             self.kill()
 
@@ -854,12 +890,28 @@ class Player_platform(pygame.sprite.Sprite):
 
         self.pulo = True
 
+        self.moedasColetadas = 0
+        self.cristaiscoletados = 0
+        self.vidas = 3
+
+        self.invulneravel = False
+        self.tempoInvulneravel = 100
+
+        # sons
+        pygame.mixer.init()
+        self.volumeMusic = 0.5
+
+        self.audio_coin = pygame.mixer.Sound("assets/sounds/smb3_coin.wav")
+        self.audio_jump = pygame.mixer.Sound("assets/sounds/smb3_frog_mario_walk.wav")
+        self.audio_tiro = pygame.mixer.Sound("assets/sounds/smb3_fireball.wav")
+        self.audio_cristal = pygame.mixer.Sound("assets/sounds/cristal.wav")
+        self.audio_morte = pygame.mixer.Sound("assets/sounds/morte.wav")
+        self.audio_perderVida = pygame.mixer.Sound("assets/sounds/perderVida.wav")
+        self.audio_quebrarBloco = pygame.mixer.Sound("assets/sounds/smb3_break_brick_block.wav")
 
     def update(self):
         self.movement()
         self.animate()
-        self.collide_enemy()
-        self.collide_crack()
 
         self.rect.x += self.x_change
         self.rect.y += self.y_change
@@ -870,9 +922,23 @@ class Player_platform(pygame.sprite.Sprite):
         self.colisions_plataforma()
         self.colisao_blocosQuebraveis()
         self.colisao_blocoMoeda()
+        self.colisao_blocoSolidoMoeda()
+        self.colisao_Moeda()
+        self.colisao_Cristal()
+
+        if not self.invulneravel:
+            self.colisao_Inimigos()
+            self.colisao_InimigosQPula()
+        else:
+            if self.tempoInvulneravel >= 0:
+                self.tempoInvulneravel -= 1
+            else:
+                self.tempoInvulneravel = 100
+                self.invulneravel = False
 
         self.x_change = 0
         self.y_change = 0
+
 
     def gravity(self):
         self.vel += self.grav
@@ -898,9 +964,13 @@ class Player_platform(pygame.sprite.Sprite):
     def events(self, events):
         if events.type == pygame.KEYDOWN:
             if events.key == pygame.K_SPACE:
+                self.audio_jump.play()
+                self.audio_jump.set_volume(self.volumeMusic)
                 self.pulo = False
                 self.vel *= -1.5
             if events.key == pygame.K_q:
+                self.audio_tiro.play()
+                self.audio_tiro.set_volume(self.volumeMusic)
                 self.game.tirosCriados += 1
 
                 if self.game.tirosCriados <= 3:
@@ -935,6 +1005,9 @@ class Player_platform(pygame.sprite.Sprite):
                     if (self.rect.y + self.rect.height) >= hits[0].rect.bottom:
                         #posisiona a cabeça do boneco em baixo do bloco
                         self.rect.y = hits[0].rect.bottom
+                        self.audio_quebrarBloco.play()
+                        self.audio_quebrarBloco.set_volume(self.volumeMusic)
+                        hits[0].kill()
                     else:
                         #posisiona as pernas do player em cima do bloco
                         self.rect.y = hits[0].rect.top - (self.rect.height)
@@ -947,6 +1020,7 @@ class Player_platform(pygame.sprite.Sprite):
                     if (self.rect.x + self.rect.width) <= hits[0].rect.right:
                         if (self.rect.y + self.rect.height) >= hits[0].rect.bottom:
                             self.rect.x = hits[0].rect.left - self.rect.width
+
                     else:
                         self.rect.x = hits[0].rect.right
 
@@ -963,7 +1037,11 @@ class Player_platform(pygame.sprite.Sprite):
                     if (self.rect.y + self.rect.height) >= hits[0].rect.bottom:
                         # posisiona a cabeça do boneco em baixo do bloco
                         self.rect.y = hits[0].rect.bottom
-                        Moeda(self.game, (hits[0].rect.x+1),(hits[0].rect.y-26), False)
+                        Moeda(self.game, (hits[0].rect.x+1), (hits[0].rect.y-26), False, True)
+                        Bloco_solido_moeda(self.game, hits[0].rect.x, hits[0].rect.y)
+                        self.audio_coin.play()
+                        self.audio_coin.set_volume(self.volumeMusic)
+                        self.moedasColetadas += 1
                         hits[0].kill()
                     else:
                         # posisiona as pernas do player em cima do bloco
@@ -980,6 +1058,50 @@ class Player_platform(pygame.sprite.Sprite):
                     else:
                         self.rect.x = hits[0].rect.right
 
+    def colisao_blocoSolidoMoeda(self):
+        hits = pygame.sprite.spritecollide(self, self.game.bloco_solido_moeda, False)
+
+        if hits:
+
+            if not self.pulo:
+                # se esta a cima do bloco
+                if (self.rect.y + self.rect.height) >= hits[0].rect.top:
+                    # se esta a baixo do bloco
+                    if (self.rect.y + self.rect.height) >= hits[0].rect.bottom:
+                        # posisiona a cabeça do boneco em baixo do bloco
+                        self.rect.y = hits[0].rect.bottom
+                    else:
+                        # posisiona as pernas do player em cima do bloco
+                        self.rect.y = hits[0].rect.top - (self.rect.height)
+
+            else:
+                # se colidir com a esquerda do bloco
+                if (self.rect.x + self.rect.width) >= hits[0].rect.left:
+
+                    # se colidiu com direita do bloco
+                    if (self.rect.x + self.rect.width) <= hits[0].rect.right:
+                        if (self.rect.y + self.rect.height) >= hits[0].rect.bottom:
+                            self.rect.x = hits[0].rect.left - self.rect.width
+                    else:
+                        self.rect.x = hits[0].rect.right
+
+    def colisao_Moeda(self):
+        hits = pygame.sprite.spritecollide(self,  self.game.coletar_moeda, False)
+
+        if hits:
+            self.audio_coin.play()
+            self.audio_coin.set_volume(self.volumeMusic)
+            self.moedasColetadas += 1
+            hits[0].kill()
+
+    def colisao_Cristal(self):
+        hits = pygame.sprite.spritecollide(self,  self.game.coletar_cristal, False)
+
+        if hits:
+            self.audio_cristal.play()
+            self.audio_cristal.set_volume(self.volumeMusic)
+            self.cristaiscoletados += 1
+            hits[0].kill()
 
     def colisions_plataforma(self):
 
@@ -987,6 +1109,43 @@ class Player_platform(pygame.sprite.Sprite):
         if hits:
             self.pulo = True
             self.rect.bottom = hits[0].rect.top
+
+    def colisao_Inimigos(self):
+        hits = pygame.sprite.spritecollide(self, self.game.inimigo, False)
+
+        if hits:
+
+            if not self.pulo:
+                # se esta a cima do inikigo
+                if (self.rect.y + self.rect.height) >= hits[0].rect.top:
+                    hits[0].kill()
+
+            else:
+
+                if self.vidas <= 0:
+                    self.audio_morte.play()
+                    self.audio_morte.set_volume(self.volumeMusic)
+                    self.kill()
+                else:
+                    self.invulneravel = True
+                    self.audio_perderVida.play()
+                    self.audio_perderVida.set_volume(self.volumeMusic)
+                    self.vidas -= 1
+
+
+    def colisao_InimigosQPula(self):
+        hits = pygame.sprite.spritecollide(self, self.game.inimigo_pulo, False)
+
+        if hits:
+            if self.vidas <= 0:
+                self.audio_morte.play()
+                self.audio_morte.set_volume(self.volumeMusic)
+                self.kill()
+            else:
+                self.invulneravel = True
+                self.audio_perderVida.play()
+                self.audio_perderVida.set_volume(self.volumeMusic)
+                self.vidas -= 1
 
     def animate(self):
         left_animations = [self.game.player_walk_left.get_sprite(0, 0, self.width, self.height),
@@ -1017,10 +1176,3 @@ class Player_platform(pygame.sprite.Sprite):
                 if self.animation_loop >= 3:
                     self.animation_loop = 1
 
-    # colisao com os inimigos
-    def collide_enemy(self):
-        pass
-
-    # colisao com os portais
-    def collide_crack(self):
-        pass

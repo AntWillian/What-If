@@ -492,20 +492,20 @@ class Inimigo_esquilo(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x - 15
-        self.rect.y = self.y + 33
+        self.rect.y = self.y + 50
 
     def update(self):
         self.saltar()
 
     def saltar(self):
 
-        if self.salto > 30:
+        if self.salto > 40:
             #personagem desce
             self.rect.y += 3
             self.descer += 1
             self.subir = False
 
-        if self.descer > 30:
+        if self.descer > 40:
             self.salto = 0
             if self.espera:
                 self.descer = 0
@@ -1176,3 +1176,19 @@ class Player_platform(pygame.sprite.Sprite):
                 if self.animation_loop >= 3:
                     self.animation_loop = 1
 
+class Text:
+
+    def __init__(self, size, text, img):
+        pygame.font.init()
+        self._layer = TEXT_LAYER
+        self.image = pygame.image.load(img)
+
+        self.font = pygame.font.Font("assets/font/HungryCharlie-Serif.ttf", size)
+        self.render = self.font.render(text, False, (255, 255, 255))
+
+    def draw(self, window, x, y):
+        window.blit(self.image, (x, y))
+        window.blit(self.render, (x+10, y))
+
+    def text_update(self, text):
+        self.render = self.font.render(text, False, (255, 255, 255))

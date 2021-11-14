@@ -30,6 +30,7 @@ class Crack1:
         self.bloco_solido_moeda = pygame.sprite.LayeredUpdates()
         self.coletar_moeda = pygame.sprite.LayeredUpdates()
         self.coletar_cristal = pygame.sprite.LayeredUpdates()
+        self.text = pygame.sprite.LayeredUpdates()
 
         #inimigo
         self.inimigo = pygame.sprite.LayeredUpdates()
@@ -41,8 +42,10 @@ class Crack1:
         # variavel que verifica se mudou de tela
         self.change_scene = False
 
-
-        #self.poder_tiro = Tiro(self, 0, 0)
+        #pontos
+        self.scoreCristais = Text(25, "0", "assets/cristalScore.png")
+        self.scoreMoedas = Text(25, "0", "assets/moedaScore.png")
+        self.scoreVidas = Text(25, "0", "assets/vidaScore.png")
 
         self.createTilemap()
 
@@ -53,9 +56,9 @@ class Crack1:
     def createTilemap(self):
         for i, row in enumerate(crak1):
             for j, column in enumerate(row):
-                Ground_crak1(self, j, i, ".")
-                if column == "-":
-                    Ground_crak1(self, j, i, "-")
+                #Ground_crak1(self, j, i, ".")
+                if column == ".":
+                    Ground_crak1(self, j, i, ".")
                 if column == "B":
                     Block_crack1(self, j, i, "B")
                 if column == "G":
@@ -96,7 +99,13 @@ class Crack1:
         self.player.events(events)
 
     def update(self):
+        self.scoreCristais.text_update("  x "+str(self.player.cristaiscoletados))
+        self.scoreMoedas.text_update("  x "+str(self.player.moedasColetadas))
+        self.scoreVidas.text_update("  x "+str(self.player.vidas))
         self.all_sprites.update()
 
     def draw(self, window):
+        self.scoreCristais.draw(window, 20, 20)
+        self.scoreMoedas.draw(window, 95, 20)
+        self.scoreVidas.draw(window, 170, 20)
         self.all_sprites.draw(window)

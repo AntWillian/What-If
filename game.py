@@ -31,7 +31,8 @@ class Game:
     def createTilemap(self):
         for i, row in enumerate(tilemap):
             for j, column in enumerate(row):
-                Ground(self, j, i)
+                if column == ".":
+                    Ground(self, j, i)
                 if column == "B":
                     Block(self, j, i)
                 if column == "P":
@@ -50,7 +51,9 @@ class Game:
         self.all_sprites.update()
 
     def draw(self, window):
+        window.fill((47, 129, 54))
         self.all_sprites.draw(window)
+
 
     def game_over(self):
         pass

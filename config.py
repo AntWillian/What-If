@@ -12,6 +12,7 @@ ENEMY_SPRITE = "assets/enemy.png"
 GROUND_SPRITE = "assets/terrain.png"
 
 #sprites layer
+TEXT_LAYER = 6
 PLAYER_LAYER = 5
 BLOCK_LAYER = 4
 ENEMY_LAYER = 3

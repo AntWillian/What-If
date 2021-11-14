@@ -21,7 +21,7 @@ class Main:
             self.game.draw(self.window)
             self.game.update()
         elif not self.crack.change_scene:
-            self.window.fill((0, 0, 0))
+            self.window.fill((31, 141, 224))
             self.crack.draw(self.window)
             self.crack.update()
 

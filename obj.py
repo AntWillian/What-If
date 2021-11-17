@@ -2,6 +2,8 @@ import pygame
 from config import *
 import math
 import random
+from maps.map1 import *
+
 
 
 class Spritesheet:
@@ -46,6 +48,8 @@ class Player(pygame.sprite.Sprite):
         self.animate()
         self.collide_enemy()
         self.collide_crack()
+        self.colisao_personagem1()
+        self.colisao_personagem2()
 
         self.rect.x += self.x_change
         self.collide_blocks('x')
@@ -171,7 +175,42 @@ class Player(pygame.sprite.Sprite):
         hits = pygame.sprite.spritecollide(self, self.game.cracks, False)
 
         if hits:
-            self.game.change_scene = True
+            self.game.fases = [False, False, False, False, False, False, False, False]
+
+            if self.game.faseIniciar == "fase1":
+                self.game.fases[1] = True
+            if self.game.faseIniciar == "fase2":
+                self.game.fases[2] = True
+            if self.game.faseIniciar == "fase3":
+                self.game.fases[3] = True
+            if self.game.faseIniciar == "fase4":
+                self.game.fases[4] = True
+            if self.game.faseIniciar == "fase5":
+                self.game.fases[5] = True
+            if self.game.faseIniciar == "fase6":
+                self.game.fases[6] = True
+            if self.game.faseIniciar == "fase7":
+                self.game.fases[7] = True
+
+    # colisao personagens
+    def colisao_personagem1(self):
+
+        hits = pygame.sprite.spritecollide(self, self.game.fenda1, False)
+        if hits:
+            if not self.game.bkpfases['fase1'][0]:
+                self.game.bkpfases['fase1'][0] = True
+                self.game.faseIniciar = "fase1"
+
+
+    def colisao_personagem2(self):
+
+        hits = pygame.sprite.spritecollide(self, self.game.fenda2, False)
+        if hits:
+            #verifica se a fase 1 foi finalizada
+            if self.game.bkpfases['fase1'][1]:
+                if not self.game.bkpfases['fase2'][0]:
+                    self.game.bkpfases['fase2'][0] = True
+                    self.game.faseIniciar = "fase2"
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -310,6 +349,78 @@ class Crack(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+class personagen_padre(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.padre.get_sprite(0, 32, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+class personagen_coveiro(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites, self.game.fenda2
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.coveiro.get_sprite(0, 32, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+class personagen_aluna(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.aluna.get_sprite(0, 32, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+class personagen_professora(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites, self.game.fenda1
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.professora.get_sprite(0, 32, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
 
 ################################## FENDA 1 #########################################
 
@@ -318,7 +429,7 @@ class Block_crack1(pygame.sprite.Sprite):
 
         self.game = game
         self._layer = BLOCK_LAYER
-        self.groups = self.game.all_sprites, self.game.plataforma
+        self.groups = self.game.all_sprites, self.game.plataforma, self.game.BlocosGerais
         pygame.sprite.Sprite.__init__(self, self.groups)
 
         self.x = x * TILESIZE_CRACK1
@@ -389,7 +500,7 @@ class Block_crack_efect(pygame.sprite.Sprite):
 
         self.game = game
         self._layer = BLOCK_LAYER
-        self.groups = self.game.all_sprites, self.game.blocoQuebraveis
+        self.groups = self.game.all_sprites, self.game.blocoQuebraveis, self.game.BlocosGerais
         pygame.sprite.Sprite.__init__(self, self.groups)
 
         self.x = x * TILESIZE_CRACK1
@@ -404,12 +515,13 @@ class Block_crack_efect(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+
 class Bloco_solido(pygame.sprite.Sprite):
     def __init__(self, game, x, y, name):
 
         self.game = game
         self._layer = BLOCK_LAYER
-        self.groups = self.game.all_sprites, self.game.troncos
+        self.groups = self.game.all_sprites, self.game.troncos, self.game.BlocosGerais
         pygame.sprite.Sprite.__init__(self, self.groups)
 
         self.x = x * TILESIZE_CRACK1
@@ -424,12 +536,13 @@ class Bloco_solido(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+
 class Bloco_solido_moeda(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
 
         self.game = game
         self._layer = BLOCK_LAYER
-        self.groups = self.game.all_sprites, self.game.bloco_solido_moeda
+        self.groups = self.game.all_sprites, self.game.bloco_solido_moeda, self.game.BlocosGerais
         pygame.sprite.Sprite.__init__(self, self.groups)
 
         self.x = x
@@ -450,7 +563,7 @@ class Bloco_especial(pygame.sprite.Sprite):
 
         self.game = game
         self._layer = BLOCK_LAYER
-        self.groups = self.game.all_sprites, self.game.blocoEspeciaisMoedas
+        self.groups = self.game.all_sprites, self.game.blocoEspeciaisMoedas, self.game.BlocosGerais
         pygame.sprite.Sprite.__init__(self, self.groups)
 
         self.x = x * TILESIZE_CRACK1
@@ -467,6 +580,7 @@ class Bloco_especial(pygame.sprite.Sprite):
 
     def colisao(self):
         self.image = self.game.terrain_spritesheet.get_sprite(96, 66, self.width, self.height)
+
 
 class Inimigo_esquilo(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -523,6 +637,7 @@ class Inimigo_esquilo(pygame.sprite.Sprite):
             self.rect.y -= 3
             self.espera = False
 
+
 class Inimigo_urso(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
 
@@ -542,14 +657,28 @@ class Inimigo_urso(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
-        self.facing = "right"
+        self.facing = "left"
         self.animation_loop = 1
+
+        self.vel = 4
+        self.grav = 1
 
     def update(self):
         self.animate()
         self.colisao_troncos()
         self.movement()
+        self.gravity()
+        self.colisions_plataforma()
 
+        if self.rect.y >= 672:
+            self.kill()
+
+    def gravity(self):
+        self.vel += self.grav
+        self.rect[1] += self.vel
+
+        if self.vel >= 12:
+            self.vel = 12
 
 
     def movement(self):
@@ -564,7 +693,6 @@ class Inimigo_urso(pygame.sprite.Sprite):
         hits = pygame.sprite.spritecollide(self, self.game.troncos, False)
 
         if hits:
-
             if (self.rect.x + (self.rect.width - 10)) >= hits[0].rect.left:
                 self.facing = 'left'
 
@@ -595,6 +723,13 @@ class Inimigo_urso(pygame.sprite.Sprite):
                 if self.animation_loop >= 3:
                     self.animation_loop = 1
 
+    def colisions_plataforma(self):
+        hits = pygame.sprite.spritecollide(self, self.game.BlocosGerais, False)
+        if hits:
+            self.pulo = True
+            self.rect.bottom = hits[0].rect.top
+
+
 class Inimigo_coelho(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
 
@@ -617,10 +752,27 @@ class Inimigo_coelho(pygame.sprite.Sprite):
         self.facing = "right"
         self.animation_loop = 1
 
+        self.vel = 4
+        self.grav = 1
+
+
     def update(self):
         self.animate()
         self.colisao_troncos()
         self.movement()
+        self.gravity()
+        self.colisions_plataforma()
+
+        if self.rect.y >= 672:
+            self.kill()
+
+
+    def gravity(self):
+        self.vel += self.grav
+        self.rect[1] += self.vel
+
+        if self.vel >= 12:
+            self.vel = 12
 
 
     def movement(self):
@@ -641,6 +793,12 @@ class Inimigo_coelho(pygame.sprite.Sprite):
 
             if (self.rect.x + self.rect.width) >= hits[0].rect.right:
                 self.facing = 'right'
+
+    def colisions_plataforma(self):
+        hits = pygame.sprite.spritecollide(self, self.game.BlocosGerais, False)
+        if hits:
+            self.pulo = True
+            self.rect.bottom = hits[0].rect.top
 
 
     def animate(self):
@@ -665,6 +823,31 @@ class Inimigo_coelho(pygame.sprite.Sprite):
                 self.animation_loop += 0.1
                 if self.animation_loop >= 3:
                     self.animation_loop = 1
+
+
+class Bloco_dePoder(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+
+        self.game = game
+        self._layer = BLOCK_LAYER
+        self.groups = self.game.all_sprites, self.game.bloco_dePoder_acao
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE_CRACK1
+        self.y = y * TILESIZE_CRACK1
+        self.width = TILESIZE_CRACK1
+        self.height = TILESIZE_CRACK1
+
+
+        self.image = self.game.terrain_spritesheet.get_sprite(96, 66, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+    def colisao(self):
+        self.image = self.game.terrain_spritesheet.get_sprite(96, 66, self.width, self.height)
+
 
 class Moeda(pygame.sprite.Sprite):
     def __init__(self, game, x, y, p, temp):
@@ -719,6 +902,7 @@ class Moeda(pygame.sprite.Sprite):
         if self.animation_loop >= 4:
             self.animation_loop = 1
 
+
 class Cristal(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
 
@@ -755,24 +939,33 @@ class Cristal(pygame.sprite.Sprite):
         if self.animation_loop >= 3:
             self.animation_loop = 1
 
+
 class Poder(pygame.sprite.Sprite):
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, p):
 
         self.game = game
         self._layer = ENEMY_LAYER
-        self.groups = self.game.all_sprites
+        self.groups = self.game.all_sprites, self.game.poder_coletavel
         pygame.sprite.Sprite.__init__(self, self.groups)
 
-        self.x = x * TILESIZE_CRACK1
-        self.y = y * TILESIZE_CRACK1
         self.width = TILESIZE_CRACK1
         self.height = TILESIZE_CRACK1
 
-        self.image = self.game.poder.get_sprite(0, 0, self.width, self.height)
+        if p:
+            self.x = x * TILESIZE_CRACK1
+            self.y = y * TILESIZE_CRACK1
+        else:
+            self.x = x
+            self.y = y
+
+        self.poder = Spritesheet("assets/pina_colada.png")
+
+        self.image = self.poder.get_sprite(0, 0, self.width, self.height)
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+
 
 class Tiro(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -859,6 +1052,7 @@ class Tiro(pygame.sprite.Sprite):
         if self.animation_loop >= 3:
             self.animation_loop = 1
 
+
 class Player_platform(pygame.sprite.Sprite):
 
     def __init__(self, game, x, y):
@@ -897,6 +1091,9 @@ class Player_platform(pygame.sprite.Sprite):
         self.invulneravel = False
         self.tempoInvulneravel = 100
 
+        self.poderAtivo = False
+        self.tempoPoder = 400
+
         # sons
         pygame.mixer.init()
         self.volumeMusic = 0.5
@@ -908,6 +1105,7 @@ class Player_platform(pygame.sprite.Sprite):
         self.audio_morte = pygame.mixer.Sound("assets/sounds/morte.wav")
         self.audio_perderVida = pygame.mixer.Sound("assets/sounds/perderVida.wav")
         self.audio_quebrarBloco = pygame.mixer.Sound("assets/sounds/smb3_break_brick_block.wav")
+        self.audio_PegarPoder = pygame.mixer.Sound("assets/sounds/smb3_mushroom_appears.wav")
 
     def update(self):
         self.movement()
@@ -925,7 +1123,10 @@ class Player_platform(pygame.sprite.Sprite):
         self.colisao_blocoSolidoMoeda()
         self.colisao_Moeda()
         self.colisao_Cristal()
+        self.colisao_Bloco_dePoder()
+        self.colisao_Poder()
 
+        # tempo de ivulneral apos um hit em inimigos
         if not self.invulneravel:
             self.colisao_Inimigos()
             self.colisao_InimigosQPula()
@@ -935,6 +1136,15 @@ class Player_platform(pygame.sprite.Sprite):
             else:
                 self.tempoInvulneravel = 100
                 self.invulneravel = False
+
+        #tempo ativo do poder
+        if self.poderAtivo:
+            if self.tempoPoder >= 0:
+                self.tempoPoder -= 1
+            else:
+                self.tempoPoder = 400
+                self.poderAtivo = False
+                self.game.tirosCriados = 0
 
         self.x_change = 0
         self.y_change = 0
@@ -960,7 +1170,6 @@ class Player_platform(pygame.sprite.Sprite):
             self.x_change += PLAYER_SPEED
             self.facing = 'right'
 
-
     def events(self, events):
         if events.type == pygame.KEYDOWN:
             if events.key == pygame.K_SPACE:
@@ -969,12 +1178,13 @@ class Player_platform(pygame.sprite.Sprite):
                 self.pulo = False
                 self.vel *= -1.5
             if events.key == pygame.K_q:
-                self.audio_tiro.play()
-                self.audio_tiro.set_volume(self.volumeMusic)
-                self.game.tirosCriados += 1
+                if self.poderAtivo:
+                    self.audio_tiro.play()
+                    self.audio_tiro.set_volume(self.volumeMusic)
+                    self.game.tirosCriados += 1
 
-                if self.game.tirosCriados <= 3:
-                    poder_tiro = Tiro(self.game, (self.rect.x + self.rect.width), (self.rect.y + 15))
+                    if self.game.tirosCriados <= 3:
+                        poder_tiro = Tiro(self.game, (self.rect.x + self.rect.width), (self.rect.y + 15))
 
     # Fuçaõ que verifica colisao com os troncos
     def collide_blocks(self):
@@ -1058,6 +1268,36 @@ class Player_platform(pygame.sprite.Sprite):
                     else:
                         self.rect.x = hits[0].rect.right
 
+    def colisao_Bloco_dePoder(self):
+        hits = pygame.sprite.spritecollide(self, self.game.bloco_dePoder_acao, False)
+
+        if hits:
+
+            if not self.pulo:
+                # se esta a cima do bloco
+                if (self.rect.y + self.rect.height) >= hits[0].rect.top:
+                    # se esta a baixo do bloco
+                    if (self.rect.y + self.rect.height) >= hits[0].rect.bottom:
+                        # posisiona a cabeça do boneco em baixo do bloco
+                        self.rect.y = hits[0].rect.bottom
+                        Poder(self.game, (hits[0].rect.x+1), (hits[0].rect.y-32), False)
+                        Bloco_solido_moeda(self.game, hits[0].rect.x, hits[0].rect.y)
+                        hits[0].kill()
+                    else:
+                        # posisiona as pernas do player em cima do bloco
+                        self.rect.y = hits[0].rect.top - (self.rect.height)
+
+            else:
+                # se colidir com a esquerda do bloco
+                if (self.rect.x + self.rect.width) >= hits[0].rect.left:
+
+                    # se colidiu com direita do bloco
+                    if (self.rect.x + self.rect.width) <= hits[0].rect.right:
+                        if (self.rect.y + self.rect.height) >= hits[0].rect.bottom:
+                            self.rect.x = hits[0].rect.left - self.rect.width
+                    else:
+                        self.rect.x = hits[0].rect.right
+
     def colisao_blocoSolidoMoeda(self):
         hits = pygame.sprite.spritecollide(self, self.game.bloco_solido_moeda, False)
 
@@ -1103,6 +1343,15 @@ class Player_platform(pygame.sprite.Sprite):
             self.cristaiscoletados += 1
             hits[0].kill()
 
+    def colisao_Poder(self):
+        hits = pygame.sprite.spritecollide(self,  self.game.poder_coletavel, False)
+
+        if hits:
+            self.audio_PegarPoder.play()
+            self.audio_PegarPoder.set_volume(self.volumeMusic)
+            self.poderAtivo = True
+            hits[0].kill()
+
     def colisions_plataforma(self):
 
         hits = pygame.sprite.spritecollide(self, self.game.plataforma, False)
@@ -1131,7 +1380,6 @@ class Player_platform(pygame.sprite.Sprite):
                     self.audio_perderVida.play()
                     self.audio_perderVida.set_volume(self.volumeMusic)
                     self.vidas -= 1
-
 
     def colisao_InimigosQPula(self):
         hits = pygame.sprite.spritecollide(self, self.game.inimigo_pulo, False)
@@ -1175,6 +1423,8 @@ class Player_platform(pygame.sprite.Sprite):
                 self.animation_loop += 0.1
                 if self.animation_loop >= 3:
                     self.animation_loop = 1
+
+
 
 class Text:
 

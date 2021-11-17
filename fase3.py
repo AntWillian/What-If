@@ -7,7 +7,7 @@ from maps.map1 import *
 import sys
 
 
-class Fase1:
+class Fase3:
 
     def __init__(self):
 
@@ -50,14 +50,14 @@ class Fase1:
 
         self.createTilemap()
 
+
         self.tirosCriados = 0
 
         self.moedasColetadas = 0
 
 
-
     def createTilemap(self):
-        for i, row in enumerate(fase1):
+        for i, row in enumerate(fase3):
             for j, column in enumerate(row):
                 #Ground_crak1(self, j, i, ".")
                 if column == ".":

@@ -7,7 +7,7 @@ from maps.map1 import *
 import sys
 
 
-class Fase1:
+class Fase2:
 
     def __init__(self):
 
@@ -55,9 +55,8 @@ class Fase1:
         self.moedasColetadas = 0
 
 
-
     def createTilemap(self):
-        for i, row in enumerate(fase1):
+        for i, row in enumerate(fase2):
             for j, column in enumerate(row):
                 #Ground_crak1(self, j, i, ".")
                 if column == ".":
@@ -102,9 +101,6 @@ class Fase1:
 
     def events(self, events):
         self.player.events(events)
-
-    def mapa_carregar(self, mapa):
-        self.mapa = mapa
 
     def update(self):
         self.scoreCristais.text_update("  x "+str(self.player.cristaiscoletados))

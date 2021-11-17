@@ -7,10 +7,9 @@ from maps.map1 import *
 import sys
 
 
-class Fase1:
+class Fase5:
 
     def __init__(self):
-
         # player
         self.player_walk_left = Spritesheet("assets/player/andando_esquerda.png")
         self.player_walk_right = Spritesheet("assets/player/andando_direita.png")
@@ -50,14 +49,14 @@ class Fase1:
 
         self.createTilemap()
 
+
         self.tirosCriados = 0
 
         self.moedasColetadas = 0
 
 
-
     def createTilemap(self):
-        for i, row in enumerate(fase1):
+        for i, row in enumerate(fase5):
             for j, column in enumerate(row):
                 #Ground_crak1(self, j, i, ".")
                 if column == ".":

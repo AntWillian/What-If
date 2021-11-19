@@ -20,7 +20,7 @@ class Fase2:
         self.inimigo_coelho = Spritesheet("assets/inimigos/coelho_fofinho.png")
         self.cristal = Spritesheet("assets/crystal.png")
 
-        self.terrain_spritesheet = Spritesheet("assets/tilemapsMario.png")
+        self.terrain_spritesheet = Spritesheet("assets/tilemaps_bioma_corrompido.png")
 
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()

@@ -64,7 +64,7 @@ class Game:
                 if column == "B":
                     Block(self, j, i)
                 if column == "P":
-                    Player(self, j, i)
+                   self.player = Player(self, j, i)
                 if column == "C":
                     Crack(self, j, i)
                 if column == "1":
@@ -83,8 +83,13 @@ class Game:
                 self.playing = False
                 self.running = False
 
+
+    def eventsDialogo(self, events):
+        self.player.events(events)
+
     def update(self):
         self.all_sprites.update()
+
 
     def draw(self, window):
         window.fill((47, 129, 54))

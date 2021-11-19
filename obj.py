@@ -2,7 +2,7 @@ import pygame
 from config import *
 import math
 import random
-from maps.map1 import *
+from dialogos import *
 
 
 
@@ -43,6 +43,16 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+        self.falasTotal = len(coveiro)
+        self.falasDitas = 0
+        self.destroy = False
+
+        self.tempoFala = 200
+
+        self.dialogoCoveiro = False
+        self.falaAtiva = True
+
+
     def update(self):
         self.movement()
         self.animate()
@@ -58,6 +68,25 @@ class Player(pygame.sprite.Sprite):
 
         self.x_change = 0
         self.y_change = 0
+
+        #dialogos
+
+        if self.dialogoCoveiro:
+            if self.falasDitas >= len(coveiro):
+                self.dialogoCoveiroFalas.kill()
+                self.dialogoCoveiro = False
+            else:
+                if self.tempoFala >= 0:
+                    if self.falaAtiva:
+                        self.dialogoCoveiroFalas = Dialogo(self.game, (self.x + 60), (self.y + 100), coveiro[self.falasDitas], False)
+                        self.falaAtiva = False
+                    self.tempoFala -= 1
+                else:
+                    self.dialogoCoveiroFalas.kill()
+                    self.tempoFala = 200
+                    self.falasDitas += 1
+                    self.falaAtiva = True
+
 
     def movement(self):
         keys = pygame.key.get_pressed()
@@ -88,6 +117,9 @@ class Player(pygame.sprite.Sprite):
                     sprite.rect.y -= PLAYER_SPEED
             self.y_change += PLAYER_SPEED
             self.facing = 'down'
+
+    def events(self, events):
+        pass
 
     # Fuçaõ que verifica colisao com os blocos
     def collide_blocks(self, direction):
@@ -211,6 +243,8 @@ class Player(pygame.sprite.Sprite):
                 if not self.game.bkpfases['fase2'][0]:
                     self.game.bkpfases['fase2'][0] = True
                     self.game.faseIniciar = "fase2"
+                    self.dialogoCoveiro = True
+
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -349,6 +383,7 @@ class Crack(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+
 class personagen_padre(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
@@ -366,6 +401,7 @@ class personagen_padre(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+
 
 class personagen_coveiro(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -385,6 +421,7 @@ class personagen_coveiro(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+
 class personagen_aluna(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
@@ -403,6 +440,7 @@ class personagen_aluna(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+
 class personagen_professora(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
@@ -420,6 +458,41 @@ class personagen_professora(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+
+
+class Dialogo(pygame.sprite.Sprite):
+
+    def __init__(self, game, x, y, dialogo, p):
+
+        self.game = game
+        self._layer = TEXT_LAYER
+        self.groups = self.game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.width = 570
+        self.height = 100
+
+        self.x = x
+        self.y = y
+
+        self.poder = Spritesheet("assets/caixaDialogo.png")
+
+        self.image = self.poder.get_sprite(0, 0, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.p = p
+
+        pygame.font.init()
+
+        self.font = pygame.font.Font("assets/font/HungryCharlie-Serif.ttf", 20)
+        self.render = self.font.render(dialogo, False, (252, 186, 3))
+        self.image.blit(self.render, (0, 0))
+
+
+
 
 
 ################################## FENDA 1 #########################################
@@ -1425,7 +1498,6 @@ class Player_platform(pygame.sprite.Sprite):
                     self.animation_loop = 1
 
 
-
 class Text:
 
     def __init__(self, size, text, img):
@@ -1436,9 +1508,12 @@ class Text:
         self.font = pygame.font.Font("assets/font/HungryCharlie-Serif.ttf", size)
         self.render = self.font.render(text, False, (255, 255, 255))
 
+
+
     def draw(self, window, x, y):
         window.blit(self.image, (x, y))
         window.blit(self.render, (x+10, y))
+
 
     def text_update(self, text):
         self.render = self.font.render(text, False, (255, 255, 255))

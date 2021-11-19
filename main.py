@@ -30,7 +30,6 @@ class Main:
         self.fase7 = Fase7()
 
     def draw(self):
-        print(self.game.fases)
         if self.game.fases[0]:
             self.game.draw(self.window)
             self.game.update()
@@ -74,6 +73,7 @@ class Main:
             self.fase5.events(events)
             self.fase6.events(events)
             self.fase7.events(events)
+            self.game.eventsDialogo(events)
 
     def update(self):
         while self.loop:

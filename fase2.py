@@ -15,9 +15,9 @@ class Fase2:
         self.player_walk_left = Spritesheet("assets/player/andando_esquerda.png")
         self.player_walk_right = Spritesheet("assets/player/andando_direita.png")
         self.player_walk_back_right = Spritesheet("assets/player/frente_e_costa.png")
-        self.inimigo_esquilo = Spritesheet("assets/inimigos/Esquilo_fofinho.png")
-        self.inimigo_urso = Spritesheet("assets/inimigos/Ursinho_fofinho.png")
-        self.inimigo_coelho = Spritesheet("assets/inimigos/coelho_fofinho.png")
+        self.inimigo_esquilo = Spritesheet("assets/inimigos/Esquilo_fofinho_deserto.png")
+        self.inimigo_urso = Spritesheet("assets/inimigos/Ursinho_fofinho_deserto.png")
+        self.inimigo_coelho = Spritesheet("assets/inimigos/coelho_fofinho_corrompido.png")
         self.cristal = Spritesheet("assets/crystal.png")
 
         self.terrain_spritesheet = Spritesheet("assets/tilemaps_bioma_corrompido.png")

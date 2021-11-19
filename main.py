@@ -38,14 +38,14 @@ class Main:
             self.fase1.draw(self.window)
             self.fase1.update()
         elif self.game.fases[2]:
-            self.window.fill((31, 141, 224))
+            self.window.fill((113, 108, 205))
             self.fase2.draw(self.window)
             self.fase2.update()
-        elif self.game.fases[2]:
+        elif self.game.fases[3]:
             self.window.fill((31, 141, 224))
             self.fase3.draw(self.window)
             self.fase3.update()
-        elif self.game.fases[2]:
+        elif self.game.fases[4]:
             self.window.fill((31, 141, 224))
             self.fase4.draw(self.window)
             self.fase4.update()

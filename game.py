@@ -14,7 +14,7 @@ class Game:
         self.bkpfases = {
             # iniciada , finalizada
             "fase1": [True, True],
-            "fase2": [False, False],
+            "fase2": [True, True],
             "fase3": [False, False],
             "fase4": [False, False],
             "fase5": [False, False],
@@ -45,6 +45,7 @@ class Game:
 
         self.fenda1 = pygame.sprite.LayeredUpdates()
         self.fenda2 = pygame.sprite.LayeredUpdates()
+        self.fenda3 = pygame.sprite.LayeredUpdates()
 
         #variavel que verifica se mudou de tela
         self.change_scene = False

@@ -60,6 +60,7 @@ class Player(pygame.sprite.Sprite):
         self.collide_crack()
         self.colisao_personagem1()
         self.colisao_personagem2()
+        self.colisao_personagem3()
 
         self.rect.x += self.x_change
         self.collide_blocks('x')
@@ -245,6 +246,17 @@ class Player(pygame.sprite.Sprite):
                     self.game.faseIniciar = "fase2"
                     self.dialogoCoveiro = True
 
+    def colisao_personagem3(self):
+
+        hits = pygame.sprite.spritecollide(self, self.game.fenda3, False)
+        if hits:
+            #verifica se a fase 2 foi finalizada
+            if self.game.bkpfases['fase2'][1]:
+                if not self.game.bkpfases['fase3'][0]:
+                    self.game.bkpfases['fase3'][0] = True
+                    self.game.faseIniciar = "fase3"
+                    #self.dialogoCoveiro = True
+
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -426,7 +438,7 @@ class personagen_aluna(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
         self._layer = GROUND_LAYER
-        self.groups = self.game.all_sprites
+        self.groups = self.game.all_sprites, self.game.fenda3
         pygame.sprite.Sprite.__init__(self, self.groups)
 
         self.x = x * TILESIZE
@@ -822,7 +834,7 @@ class Inimigo_coelho(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
-        self.facing = "right"
+        self.facing = "left"
         self.animation_loop = 1
 
         self.vel = 4

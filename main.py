@@ -33,6 +33,7 @@ class Main:
         if self.game.fases[0]:
             self.game.draw(self.window)
             self.game.update()
+
         elif self.game.fases[1]:
             self.window.fill((31, 141, 224))
             self.fase1.draw(self.window)
@@ -50,7 +51,7 @@ class Main:
             self.fase4.draw(self.window)
             self.fase4.update()
         elif self.game.fases[5]:
-            self.window.fill((31, 141, 224))
+            self.window.fill((113, 108, 205))
             self.fase5.draw(self.window)
             self.fase5.update()
         elif self.game.fases[6]:
@@ -61,6 +62,11 @@ class Main:
             self.window.fill((31, 141, 224))
             self.fase7.draw(self.window)
             self.fase7.update()
+
+        if self.fase1.voltarFase or self.fase2.voltarFase or self.fase3.voltarFase or self.fase4.voltarFase or self.fase5.voltarFase or self.fase6.voltarFase or self.fase7.voltarFase:
+            self.game.draw(self.window)
+            self.game.update()
+
 
     def events(self):
         for events in pygame.event.get():
@@ -73,7 +79,6 @@ class Main:
             self.fase5.events(events)
             self.fase6.events(events)
             self.fase7.events(events)
-            self.game.eventsDialogo(events)
 
     def update(self):
         while self.loop:

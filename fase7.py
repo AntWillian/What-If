@@ -22,16 +22,22 @@ class Fase7:
 
         self.terrain_spritesheet = Spritesheet("assets/tilemapsMario.png")
 
+        self.portal = Spritesheet("assets/portal/Portal_1.png")
+        self.portal_voltar = pygame.sprite.LayeredUpdates()
+
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()
         self.troncos = pygame.sprite.LayeredUpdates()
         self.plataforma = pygame.sprite.LayeredUpdates()
+        self.plataforma_baixo = pygame.sprite.LayeredUpdates()
         self.bloco_solido_moeda = pygame.sprite.LayeredUpdates()
         self.coletar_moeda = pygame.sprite.LayeredUpdates()
         self.coletar_cristal = pygame.sprite.LayeredUpdates()
         self.poder_coletavel = pygame.sprite.LayeredUpdates()
         self.bloco_dePoder_acao = pygame.sprite.LayeredUpdates()
         self.BlocosGerais = pygame.sprite.LayeredUpdates()
+        self.bloco_invisivel = pygame.sprite.LayeredUpdates()
+        self.plataforma_solido = pygame.sprite.LayeredUpdates()
 
         #inimigo
         self.inimigo = pygame.sprite.LayeredUpdates()
@@ -41,7 +47,7 @@ class Fase7:
         self.blocoEspeciaisMoedas = pygame.sprite.LayeredUpdates()
 
         # variavel que verifica se mudou de tela
-        self.change_scene = False
+        self.voltarFase = False
 
         #pontos
         self.scoreCristais = Text(25, "0", "assets/cristalScore.png")
@@ -55,33 +61,36 @@ class Fase7:
 
         self.moedasColetadas = 0
 
-
     def createTilemap(self):
         for i, row in enumerate(fase7):
             for j, column in enumerate(row):
-                #Ground_crak1(self, j, i, ".")
+                # Ground_crak1(self, j, i, ".")
                 if column == ".":
-                    Ground_crak1(self, j, i, ".")
+                    Ground_crak1(self, j, i, ".", self.terrain_spritesheet)
                 if column == "B":
-                    Block_crack1(self, j, i, "B")
+                    Block_crack1(self, j, i, "B", self.terrain_spritesheet)
                 if column == "G":
-                    Block_crack1(self, j, i, "G")
+                    Block_crack1(self, j, i, "G", self.terrain_spritesheet)
                 if column == "N":
-                    Block_crack1(self, j, i, "N")
+                    Block_crack1(self, j, i, "N", self.terrain_spritesheet)
                 if column == "T":  # LADO Esquerdo do tronco
-                    Troncos(self, j, i, "T")
+                    Troncos(self, j, i, "T", self.terrain_spritesheet)
                 if column == "L":  # LADO Direito do tronco
-                    Troncos(self, j, i, "L")
+                    Troncos(self, j, i, "L", self.terrain_spritesheet)
                 if column == "F":
-                    Block_crack_efect(self, j, i, "F")
+                    Block_crack_efect(self, j, i, "F", self.terrain_spritesheet)
                 if column == "H":
-                    self.blocoMoedas = Bloco_especial(self, j, i, "H")
+                    self.blocoMoedas = Bloco_especial(self, j, i, "H", self.terrain_spritesheet)
                 if column == "O":
-                    Bloco_solido(self, j, i, "O")
+                    Bloco_solido(self, j, i, "O", self.terrain_spritesheet)
                 if column == "#":
-                    Bloco_dePoder(self, j, i)
+                    Bloco_dePoder(self, j, i, self.terrain_spritesheet)
+                if column == "@":
+                    portal_Voltar(self, j, i)
+                if column == "&":
+                    bloco_invisivel(self, j, i, self.terrain_spritesheet)
 
-                #Coletaveis
+                # Coletaveis
                 if column == "M":
                     Moeda(self, j, i, True, False)
                 if column == "A":
@@ -90,7 +99,7 @@ class Fase7:
                     Poder(self, j, i, False)
 
                 if column == "P":
-                   self.player = Player_platform(self, j, i)
+                    self.player = Player_platform(self, j, i, False, True)
 
                 ## Inimigos
                 if column == "E":

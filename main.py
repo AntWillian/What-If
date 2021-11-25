@@ -1,3 +1,13 @@
+import os, sys
+
+dirpath = os.getcwd()
+sys.path.append(dirpath)
+
+if getattr(sys, "frozen", False):
+    os.chdir(sys._MEIPASS)
+
+    ######
+
 from fase1 import *
 from fase2 import *
 from fase3 import *
@@ -5,7 +15,6 @@ from fase4 import *
 from fase5 import *
 from fase6 import *
 from fase7 import *
-from fase1 import *
 from game import Game
 from config import *
 
@@ -30,7 +39,10 @@ class Main:
         self.fase7 = Fase7()
 
     def draw(self):
-        if self.game.fases[0]:
+        if self.game.fases[0] or self.fase1.voltarFase or self.fase2.voltarFase or self.fase3.voltarFase or self.fase4.voltarFase or self.fase5.voltarFase or self.fase6.voltarFase or self.fase7.voltarFase:
+
+            print(self.game.fases)
+
             self.game.draw(self.window)
             self.game.update()
 
@@ -39,6 +51,7 @@ class Main:
             self.fase1.draw(self.window)
             self.fase1.update()
         elif self.game.fases[2]:
+            print("111111111111111111111111111111111")
             self.window.fill((113, 108, 205))
             self.fase2.draw(self.window)
             self.fase2.update()
@@ -63,9 +76,7 @@ class Main:
             self.fase7.draw(self.window)
             self.fase7.update()
 
-        if self.fase1.voltarFase or self.fase2.voltarFase or self.fase3.voltarFase or self.fase4.voltarFase or self.fase5.voltarFase or self.fase6.voltarFase or self.fase7.voltarFase:
-            self.game.draw(self.window)
-            self.game.update()
+
 
 
     def events(self):

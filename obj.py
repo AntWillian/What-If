@@ -113,7 +113,7 @@ class Player(pygame.sprite.Sprite):
                 self.dialogoProfessora = False
                 self.dialogoAtivo = False
                 self.falasDitas = 0
-                self.cratera = Crack(self.game, (self.x + 13), (self.y - 24))
+                self.cratera = Crack(self.game, (self.x + 50), (self.y - 25))
             else:
                 if self.tempoFala >= 0:
                     if self.falaAtiva:
@@ -248,9 +248,12 @@ class Player(pygame.sprite.Sprite):
         if hits:
             self.game.fases = [False, False, False, False, False, False, False, False]
 
+            print(self.game.faseIniciar)
+
             if self.game.faseIniciar == "fase1":
                 self.game.fases[1] = True
             if self.game.faseIniciar == "fase2":
+                print("aquiuiuiuiuiuiu")
                 self.game.fases[2] = True
             if self.game.faseIniciar == "fase3":
                 self.game.fases[3] = True
@@ -263,7 +266,7 @@ class Player(pygame.sprite.Sprite):
             if self.game.faseIniciar == "fase7":
                 self.game.fases[7] = True
 
-            hits[0].kill()
+           # hits[0].kill()
 
     # colisao personagens
     def colisao_personagem1(self):
@@ -490,7 +493,7 @@ class personagen_padre(pygame.sprite.Sprite):
         self.rect.y = self.y
 
         if self.game.bkpfases['fase1'][0]:
-           self.quest = quest(self.game, (self.x+13), (self.y - 24))
+           self.quest = quest(self.game, (self.rect.x+13), (self.rect.y - 24))
 
     def update(self):
         if not self.game.bkpfases['fase1'][0]:
@@ -527,7 +530,7 @@ class personagen_coveiro(pygame.sprite.Sprite):
             if self.ativarAQuest:
                 self.questAtiva = True
                 self.ativarAQuest = False
-                self.quest = quest(self.game, (self.x + 13), (self.y - 24))
+                self.quest = quest(self.game, (self.rect.x + 13), (self.rect.y - 24))
 
         if self.questAtiva:
             if not self.game.bkpfases['fase2'][0]:
@@ -562,7 +565,7 @@ class personagen_aluna(pygame.sprite.Sprite):
             if self.ativarAQuest:
                 self.questAtiva = True
                 self.ativarAQuest = False
-                self.quest = quest(self.game, (self.x + 13), (self.y - 24))
+                self.quest = quest(self.game, (self.rect.x + 13), (self.rect.y - 24))
 
         if self.questAtiva:
             if not self.game.bkpfases['fase3'][0]:
@@ -598,7 +601,7 @@ class personagen_professora(pygame.sprite.Sprite):
             if self.ativarAQuest:
                 self.questAtiva = True
                 self.ativarAQuest = False
-                self.quest = quest(self.game, (self.x + 13), (self.y - 24))
+                self.quest = quest(self.game, (self.rect.x + 13), (self.rect.x - 24))
 
         if self.questAtiva:
             if not self.game.bkpfases['fase4'][0]:

@@ -126,6 +126,7 @@ class Fase1:
         self.scoreVidas.text_update("  x "+str(self.player.vidas))
         self.all_sprites.update()
 
+
     def draw(self, window):
         self.scoreCristais.draw(window, 20, 20)
         self.scoreMoedas.draw(window, 95, 20)

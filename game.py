@@ -9,7 +9,7 @@ class Game:
 
     def __init__(self):
         #carregagando save (por enquando sera um fixo mas aqui ele deve pegar de um txt)
-        self.faseIniciar = 'fase6'  # recebe fase1 como padrao sera trocado de acordo com o salvo no arquivo de saves
+        self.faseIniciar = 'fase1'  # recebe fase1 como padrao sera trocado de acordo com o salvo no arquivo de saves
 
         self.bkpfases = {
             #missao ativa, iniciada , finalizada, cristais a coletar
@@ -21,7 +21,6 @@ class Game:
             "fase6": [False, False, False, 0],
             "fase7": [False, False, False, 0],
         }
-
 
         #Player characters
         self.player_walk_left = Spritesheet("assets/player/andando_esquerda.png")
@@ -56,7 +55,9 @@ class Game:
         #variavel que verifica se mudou de tela
         self.change_scene = False
 
+
         self.fases =[True, False, False, False, False, False, False, False]
+
 
         #grava qual mapa da fase sera carregado
         self.fase_iniciar = ""

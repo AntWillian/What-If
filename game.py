@@ -22,6 +22,14 @@ class Game:
             "fase7": [False, False, False, 0],
         }
 
+        self.fase1 = 0
+        self.fase2 = 0
+        self.fase3 = 0
+        self.fase4 = 0
+        self.fase5 = 0
+        self.fase6 = 0
+        self.fase7 = 0
+
         #Player characters
         self.player_walk_left = Spritesheet("assets/player/andando_esquerda.png")
         self.player_walk_right = Spritesheet("assets/player/andando_direita.png")

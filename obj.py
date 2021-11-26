@@ -248,25 +248,45 @@ class Player(pygame.sprite.Sprite):
         if hits:
             self.game.fases = [False, False, False, False, False, False, False, False]
 
+            self.game.fase1 = False
+            self.game.fase2 = False
+            self.game.fase3 = False
+            self.game.fase4 = False
+            self.game.fase5 = False
+            self.game.fase6 = False
+            self.game.fase7 = False
+
             print(self.game.faseIniciar)
 
             if self.game.faseIniciar == "fase1":
                 self.game.fases[1] = True
+                self.game.fase1 = True
             if self.game.faseIniciar == "fase2":
-                print("aquiuiuiuiuiuiu")
                 self.game.fases[2] = True
+                self.game.fase2 = True
+
             if self.game.faseIniciar == "fase3":
                 self.game.fases[3] = True
+                self.game.fase3 = True
+
             if self.game.faseIniciar == "fase4":
                 self.game.fases[4] = True
+                self.game.fase4 = True
+
             if self.game.faseIniciar == "fase5":
                 self.game.fases[5] = True
+                self.game.fase5 = True
+
             if self.game.faseIniciar == "fase6":
                 self.game.fases[6] = True
+                self.game.fase6 = True
+
             if self.game.faseIniciar == "fase7":
                 self.game.fases[7] = True
+                self.game.fase7 = True
 
-           # hits[0].kill()
+
+            hits[0].kill()
 
     # colisao personagens
     def colisao_personagem1(self):
@@ -1633,6 +1653,10 @@ class Player_platform(pygame.sprite.Sprite):
             if self.rect.y >= 672:
                 for sprite in self.game.all_sprites:
                         sprite.rect.y -= PLAYER_SPEED
+        else:
+            if self.rect.y >= 672:
+                self.game.restartFase = True
+
 
     def gravity(self):
         self.vel += self.grav
@@ -1967,8 +1991,9 @@ class Player_platform(pygame.sprite.Sprite):
 
         if hits:
             self.game.voltarFase = True
+            self.game.reentradaFase = True
             #self.game.bkpfases[self.game.faseIniciar][3] = self.cristaiscoletados
-            self.kill()
+
 
 
 class Text:

@@ -50,6 +50,7 @@ class Fase2:
         # variavel que verifica se mudou de tela
         self.voltarFase = False
         self.restartFase = False
+        self.faseFinalizada = False
 
         self.reentradaFase = False
 

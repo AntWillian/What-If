@@ -43,21 +43,47 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
-        self.falasTotal = len(coveiro)
+        self.falasTotal = len(dialogoCoveiro)
         self.falasDitas = 0
         self.destroy = False
 
-        self.tempoFala = 200
+        self.tempoFala = 400
 
-        self.dialogoCoveiro = False
-        self.dialogoPadre = False
-        self.dialogoAluna = False
-        self.dialogoProfessora = False
+        self.dialogoinicial= False #fase 1
+
+        self.dialogoMultiploFazendeiros = False #dialogo entre hernandez e neto #fase 2
+        self.dialogoNetoHernan = False
+
+        self.dialogoMiguel = False #fase 3
+        self.dialogoMultiploMiguelNeto = False #dialogo com a neta de miguel
+
+        self.dialogoProfessora = False #dialogo principal #fase 4
+        self.dialogoSecundarioProfessora = False  # dialogo secundario
+
+
+        self.dialogoCoveiro = False #fase 5
+        self.dialogoSecundarioCoveiro = False
+
+
+        self.dialogoPadre = False #fase 6
+        self.dialogoSecundarioPadre = False
+
+        self.dialogoPrefeito = False  # fase 7
+        self.dialogoSecundarioPrefeito = False
+        self.faseFinal = False
+
         self.dialogoAtivo = False
+        self.dialogoAtivoSecundario = False
+
+        self.finalizarDialogoProfessora = False
+
+        self.dialogoQuestFinal = False
 
 
         self.falasDialogo = ""
         self.falaAtiva = True
+
+        self.nomePersonagem = ""
 
 
         # ajustar para entrega Final
@@ -74,8 +100,14 @@ class Player(pygame.sprite.Sprite):
         self.collide_crack()
         self.colisao_personagem1()
         self.colisao_personagem2()
+        self.colisao_personagem2Secundario()
         self.colisao_personagem3()
+        self.colisao_personagem3Secundario()
         self.colisao_personagem4()
+        self.colisao_personagem5()
+        self.colisao_personagem6()
+        self.colisao_personagem7()
+        self.colisao_personagemFinal()
 
         self.rect.x += self.x_change
         self.collide_blocks('x')
@@ -88,72 +120,200 @@ class Player(pygame.sprite.Sprite):
 
         #dialogos
 
-        if self.dialogoCoveiro:
-            self.falasDialogo = coveiro
+        if self.dialogoinicial: # fase 1
+            self.falasDialogo = dialogoInicial
+            self.nomePersonagem = 'Senhor perdido'
             self.dialogoAtivo = True
 
-        if self.dialogoPadre:
-            self.falasDialogo = dialogoPadre
-            self.dialogoAtivo = True
+        if self.dialogoNetoHernan: # dialogo secundario segunda fase
+            self.falasDialogo = dialogoNetoDoHernandez
+            self.nomePersonagem = 'Neto de Hernandez'
+            self.dialogoAtivoSecundario = True
 
-        if self.dialogoAluna:
-            self.falasDialogo = dialogoAluna
+        if self.dialogoMiguel: #fase 3
+            self.falasDialogo = dialogoMiguel
+            self.nomePersonagem = 'Miguel'
             self.dialogoAtivo = True
 
         if self.dialogoProfessora:
             self.falasDialogo = dialogoProfessora
+            self.nomePersonagem = 'Professora'
             self.dialogoAtivo = True
+
+        if self.dialogoSecundarioProfessora:
+            self.falasDialogo = dialogoProfessoraSecumdario
+            self.nomePersonagem = 'Professora'
+            self.dialogoAtivoSecundario = True
+
+        if self.dialogoCoveiro:
+            self.falasDialogo = dialogoCoveiro
+            self.nomePersonagem = 'Coveiro'
+            self.dialogoAtivo = True
+
+        if self.dialogoSecundarioCoveiro:
+            self.falasDialogo = dialogoSecundarioCoveiro
+            self.nomePersonagem = 'Coveiro'
+            self.dialogoAtivoSecundario = True
+
+        if self.dialogoPadre:
+            self.falasDialogo = dialogoPadre
+            self.nomePersonagem = 'Padre'
+            self.dialogoAtivo = True
+
+        if self.dialogoSecundarioPadre:
+            self.falasDialogo = dialogoPadreSecundario
+            self.nomePersonagem = 'Padre'
+            self.dialogoAtivoSecundario = True
+
+        if self.dialogoPrefeito:
+            self.falasDialogo = dialogoPrefeito
+            self.nomePersonagem = 'Prefeito'
+            self.dialogoAtivo = True
+
+        if self.dialogoSecundarioPrefeito:
+            self.falasDialogo = dialogoSecundarioPrefeito
+            self.nomePersonagem = 'Prefeito'
+            self.dialogoAtivoSecundario = True
+
+        if self.dialogoQuestFinal:
+            self.falasDialogo = dialogoEnviadoDoTempo
+            self.nomePersonagem = 'Enviado da Agencia'
+            self.dialogoAtivoSecundario = True
+
+
 
         if self.dialogoAtivo:
             if self.falasDitas >= len(self.falasDialogo):
                 self.dialogoCaixaFalas.kill()
-                self.dialogoCoveiro = False
-                self.dialogoPadre = False
-                self.dialogoAluna = False
-                self.dialogoProfessora = False
+                self.dialogoinicial = False  # fase 1
+
+                self.dialogoNetoHernan = False
+
+                self.dialogoMiguel = False  # fase 3
+
+                self.dialogoProfessora = False  # dialogo principal #fase 4
+                self.dialogoSecundarioProfessora = False  # dialogo secundario
+
+                self.dialogoCoveiro = False  # fase 5
+                self.dialogoSecundarioCoveiro = False
+
+                self.dialogoPadre = False  # fase 6
+                self.dialogoSecundarioPadre = False
+
+                self.dialogoPrefeito = False #fase 7
+
                 self.dialogoAtivo = False
                 self.falasDitas = 0
                 self.cratera = Crack(self.game, (self.x + 50), (self.y - 25))
             else:
                 if self.tempoFala >= 0:
                     if self.falaAtiva:
-                        self.dialogoCaixaFalas = Dialogo(self.game, (self.x + 60), (self.y + 100), self.falasDialogo[self.falasDitas], False)
+                        self.dialogoCaixaFalas = Dialogo(self.game, (self.x + 60), (self.y + 100), self.falasDialogo[self.falasDitas], "jorge")
                         self.falaAtiva = False
                     self.tempoFala -= 1
                 else:
                     self.dialogoCaixaFalas.kill()
-                    self.tempoFala = 200
+                    self.tempoFala = 400
                     self.falasDitas += 1
                     self.falaAtiva = True
 
+        #Dialogos secundarios
+        if self.dialogoAtivoSecundario:
+            if self.falasDitas >= len(self.falasDialogo):
+                self.dialogoCaixaFalas.kill()
+                self.dialogoNetoHernan = False #fase 1
+
+                self.dialogoSecundarioProfessora = False  # dialogo secundario fase 4
+
+                self.dialogoSecundarioCoveiro = False #fase 5
+
+                self.dialogoSecundarioPadre = False #fase 6
+
+                self.dialogoSecundarioPrefeito = False #fase 7
+
+                self.dialogoAtivoSecundario = False
+
+                if self.dialogoQuestFinal:
+                    self.dialogoQuestFinal = False
+                    self.game.fases = [False, False, False, False, False, False, False, False, True]
+
+                self.falasDitas = 0
+            else:
+                if self.tempoFala >= 0:
+                    if self.falaAtiva:
+                        self.dialogoCaixaFalas = Dialogo(self.game, (self.x + 60), (self.y + 100),
+                                                         self.falasDialogo[self.falasDitas], self.nomePersonagem)
+                        self.falaAtiva = False
+                    self.tempoFala -= 1
+                else:
+                    self.dialogoCaixaFalas.kill()
+                    self.tempoFala = 400
+                    self.falasDitas += 1
+                    self.falaAtiva = True
+
+        if self.dialogoMultiploFazendeiros:
+
+            if self.falasDitas >= len(dialogoFazendeiro1):
+                self.dialogoCaixaFalas.kill()
+                self.dialogoMultiploFazendeiros = False
+                self.falasDitas = 0
+                self.cratera = Crack(self.game, (self.x + 50), (self.y - 25))
+            else:
+                if self.tempoFala >= 0:
+                    if self.falaAtiva:
+                        if self.falasDitas == 0 or self.falasDitas == 4 or self.falasDitas == 9 or self.falasDitas == 13:
+                            self.nomePersonagem = 'Hernandez'
+                        elif self.falasDitas == 1 or self.falasDitas == 6 or self.falasDitas == 11:
+                            self.nomePersonagem = 'Neto de Hernandez'
+
+                        self.dialogoCaixaFalas = Dialogo(self.game, (self.x + 60), (self.y + 100), dialogoFazendeiro1[self.falasDitas], self.nomePersonagem)
+                        self.falaAtiva = False
+                    self.tempoFala -= 1
+                else:
+                    self.dialogoCaixaFalas.kill()
+                    self.tempoFala = 300
+                    self.falasDitas += 1
+                    self.falaAtiva = True
+
+        #dialogo com a neta de miguel
+        if self.dialogoMultiploMiguelNeto:
+
+            if self.falasDitas >= len(dialogoNetaMiguel):
+                self.dialogoCaixaFalas.kill()
+                self.dialogoMultiploMiguelNeto = False
+                self.falasDitas = 0
+            else:
+                if self.tempoFala >= 0:
+                    if self.falaAtiva:
+                        if self.falasDitas == 2:
+                            self.nomePersonagem = 'Miguel'
+                        elif self.falasDitas == 0 or self.falasDitas == 6:
+                            self.nomePersonagem = 'Neta de Miguel'
+
+                        self.dialogoCaixaFalas = Dialogo(self.game, (self.x + 60), (self.y + 100), dialogoNetaMiguel[self.falasDitas], self.nomePersonagem)
+                        self.falaAtiva = False
+                    self.tempoFala -= 1
+                else:
+                    self.dialogoCaixaFalas.kill()
+                    self.tempoFala = 300
+                    self.falasDitas += 1
+                    self.falaAtiva = True
 
     def movement(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
-            for sprite in self.game.all_sprites:
-                if self.rect.x < (WIN_WIDTH / 2):
-                    sprite.rect.x += PLAYER_SPEED
             self.x_change -= PLAYER_SPEED
             self.facing = 'left'
 
         if keys[pygame.K_d]:
-            for sprite in self.game.all_sprites:
-                if self.rect.x >= (WIN_WIDTH / 2):
-                    sprite.rect.x -= PLAYER_SPEED
             self.x_change += PLAYER_SPEED
             self.facing = 'right'
 
         if keys[pygame.K_w]:
-            for sprite in self.game.all_sprites:
-                if self.rect.y < (WIN_HEIGHT / 2):
-                    sprite.rect.y += PLAYER_SPEED
             self.y_change -= PLAYER_SPEED
             self.facing = 'up'
 
         if keys[pygame.K_s]:
-            for sprite in self.game.all_sprites:
-                if self.rect.y > (WIN_HEIGHT / 2):
-                    sprite.rect.y -= PLAYER_SPEED
             self.y_change += PLAYER_SPEED
             self.facing = 'down'
 
@@ -256,7 +416,6 @@ class Player(pygame.sprite.Sprite):
             self.game.fase6 = False
             self.game.fase7 = False
 
-            print(self.game.faseIniciar)
 
             if self.game.faseIniciar == "fase1":
                 self.game.fases[1] = True
@@ -297,9 +456,7 @@ class Player(pygame.sprite.Sprite):
                 self.game.bkpfases['fase1'][0] = False # tira o simbolo de quest
                 self.game.bkpfases['fase1'][1] = True
                 self.game.faseIniciar = "fase1"
-                self.dialogoPadre = True
-                self.game.bkpfases['fase1'][2] = True  # coloca que a fase 1 foi finalizada
-                self.game.bkpfases['fase2'][0] = True #libera a proxima quest
+                self.dialogoinicial = True
 
     def colisao_personagem2(self):
 
@@ -308,12 +465,20 @@ class Player(pygame.sprite.Sprite):
             #verifica se a fase 1 foi finalizada
             if self.game.bkpfases['fase1'][2]:
                 if not self.game.bkpfases['fase2'][1]: # vefica se a fase ja foi iniciada
-                    self.game.bkpfases['fase2'][0] = False  # tira o simbolo de quest
+                    self.game.bkpfases['fase2'][0] = True  # tira o simbolo de quest
                     self.game.bkpfases['fase2'][1] = True
                     self.game.faseIniciar = "fase2"
-                    self.dialogoCoveiro = True
-                    self.game.bkpfases['fase2'][2] = True  # coloca que a fase 1 foi finalizada
-                    self.game.bkpfases['fase3'][0] = True  # libera a proxima quest
+                    self.dialogoMultiploFazendeiros = True
+
+    def colisao_personagem2Secundario(self):
+
+        hits = pygame.sprite.spritecollide(self, self.game.fenda2Secunario, False)
+        if hits:
+            # verifica se a fase 2 foi finalizada
+            if not self.game.bkpfases['fase2'][3]:
+                    self.dialogoNetoHernan = True
+                    self.game.bkpfases['fase2'][3] = True
+                    self.game.bkpfases['fase3'][0] = True
 
     def colisao_personagem3(self):
 
@@ -325,9 +490,17 @@ class Player(pygame.sprite.Sprite):
                     self.game.bkpfases['fase3'][0] = False  # tira o simbolo de quest
                     self.game.bkpfases['fase3'][1] = True
                     self.game.faseIniciar = "fase3"
-                    self.dialogoAluna = True
-                    self.game.bkpfases['fase3'][2] = True  # coloca que a fase 1 foi finalizada
-                    self.game.bkpfases['fase4'][0] = True  # libera a proxima quest
+                    self.dialogoMiguel = True
+
+    def colisao_personagem3Secundario(self):
+
+        hits = pygame.sprite.spritecollide(self, self.game.fenda3Secundario, False)
+        if hits:
+            # verifica se a fase 3 foi finalizada
+            if not self.game.bkpfases['fase3'][3]:
+                self.dialogoMultiploMiguelNeto = True
+                self.game.bkpfases['fase3'][3] = True
+                self.game.bkpfases['fase4'][0] = True
 
     def colisao_personagem4(self):
 
@@ -340,8 +513,81 @@ class Player(pygame.sprite.Sprite):
                     self.game.bkpfases['fase4'][1] = True
                     self.game.faseIniciar = "fase4"
                     self.dialogoProfessora = True
-                    self.game.bkpfases['fase4'][2] = True  # coloca que a fase 1 foi finalizada
-                    self.game.bkpfases['fase5'][0] = True  # libera a proxima quest
+
+            # verifica se a fase 4 foi finalizada
+            if self.game.bkpfases['fase4'][2] and not self.finalizarDialogoProfessora:
+                self.dialogoSecundarioProfessora = True
+                self.game.bkpfases['fase4'][3] = True
+                self.game.bkpfases['fase5'][0] = True
+                self.finalizarDialogoProfessora = True
+
+    def colisao_personagem5(self):
+
+        hits = pygame.sprite.spritecollide(self, self.game.fenda5, False)
+        if hits:
+            #verifica se a fase 3 foi finalizada
+            if self.game.bkpfases['fase4'][2]:
+                if not self.game.bkpfases['fase5'][1]:  # vefica se a fase ja foi iniciada
+                    self.game.bkpfases['fase5'][0] = False  # tira o simbolo de quest
+                    self.game.bkpfases['fase5'][1] = True
+                    self.game.faseIniciar = "fase5"
+                    self.dialogoCoveiro = True
+
+            # verifica se a fase 4 foi finalizada
+            if self.game.bkpfases['fase5'][2] and not self.game.bkpfases['fase6'][0] :
+                self.dialogoSecundarioCoveiro = True
+                self.game.bkpfases['fase5'][3] = True
+                self.game.bkpfases['fase6'][0] = True
+
+    def colisao_personagem6(self):
+
+        hits = pygame.sprite.spritecollide(self, self.game.fenda6, False)
+        if hits:
+            #verifica se a fase 3 foi finalizada
+            if self.game.bkpfases['fase5'][2]:
+                if not self.game.bkpfases['fase6'][1]:  # vefica se a fase ja foi iniciada
+                    self.game.bkpfases['fase6'][0] = False  # tira o simbolo de quest
+                    self.game.bkpfases['fase6'][1] = True
+                    self.game.faseIniciar = "fase6"
+                    self.dialogoPadre = True
+
+            # verifica se a fase 4 foi finalizada
+            if self.game.bkpfases['fase6'][2] and not self.game.bkpfases['fase7'][0] :
+                self.dialogoSecundarioPadre = True
+                self.game.bkpfases['fase6'][3] = True
+                self.game.bkpfases['fase7'][0] = True
+
+
+    def colisao_personagem7(self):
+
+        hits = pygame.sprite.spritecollide(self, self.game.fenda7, False)
+        if hits:
+            #verifica se a fase 3 foi finalizada
+            if self.game.bkpfases['fase6'][2]:
+                if not self.game.bkpfases['fase7'][1]:  # vefica se a fase ja foi iniciada
+                    self.game.bkpfases['fase7'][0] = False  # tira o simbolo de quest
+                    self.game.bkpfases['fase7'][1] = True
+                    self.game.faseIniciar = "fase7"
+                    self.dialogoPrefeito = True
+
+            # verifica se a fase 7 foi finalizada
+            if self.game.bkpfases['fase7'][2] and not self.faseFinal:
+                self.dialogoSecundarioPrefeito = True
+                self.game.bkpfases['fase7'][3] = True
+                self.game.bkpfases['fase7'][4] = True
+                self.faseFinal = True
+                personagen_final(self.game, (self.x+30), (self.y))
+                self.game.questFinal = True
+
+    def colisao_personagemFinal(self):
+
+        hits = pygame.sprite.spritecollide(self, self.game.personagenFinal, False)
+        if hits:
+            # verifica se a fase 3 foi finalizada
+            if self.game.questFinal:
+                if self.game.bkpfases['fase7'][1]:  # vefica se a fase ja foi iniciada
+                    self.game.questFinal = False  # tira o simbolo de quest
+                    self.dialogoQuestFinal = True
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -493,7 +739,7 @@ class Crack(pygame.sprite.Sprite):
         if self.ticks >= 9:
             self.ticks = 1
 
-
+#personagem fase 1
 class personagen_padre(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
@@ -513,14 +759,14 @@ class personagen_padre(pygame.sprite.Sprite):
         self.rect.y = self.y
 
         if self.game.bkpfases['fase1'][0]:
-           self.quest = quest(self.game, (self.rect.x+13), (self.rect.y - 24))
+           self.quest = quest(self.game, (self.rect.x+13), (self.rect.y - 24), True)
 
     def update(self):
         if not self.game.bkpfases['fase1'][0]:
             self.quest.kill()
 
-
-class personagen_coveiro(pygame.sprite.Sprite):
+#personagem fase 2
+class personagen_hernandez(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
         self._layer = GROUND_LAYER
@@ -532,7 +778,7 @@ class personagen_coveiro(pygame.sprite.Sprite):
         self.width = TILESIZE
         self.height = TILESIZE
 
-        self.image = self.game.coveiro.get_sprite(0, 32, self.width, self.height)
+        self.image = self.game.fazendeiro1.get_sprite(0, 32, self.width, self.height)
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
@@ -546,22 +792,97 @@ class personagen_coveiro(pygame.sprite.Sprite):
 
     def update(self):
 
-        if self.game.bkpfases['fase2'][0]:
+        if self.game.bkpfases['fase1'][2]:
+
             if self.ativarAQuest:
                 self.questAtiva = True
                 self.ativarAQuest = False
-                self.quest = quest(self.game, (self.rect.x + 13), (self.rect.y - 24))
+                self.quest = quest(self.game, (self.x + 13), (self.y - 24), True)
+                #self.quest = quest(self.game, 0,0, True)
 
         if self.questAtiva:
-            if not self.game.bkpfases['fase2'][0]:
+            if self.game.bkpfases['fase2'][0]:
                 self.quest.kill()
 
+#personagem secundario fase 2
+class personagen_neto_hernandez(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites, self.game.fenda2Secunario
+        pygame.sprite.Sprite.__init__(self, self.groups)
 
-class personagen_aluna(pygame.sprite.Sprite):
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.fazendeiro2.get_sprite(0, 32, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.questAtiva = False
+
+        self.ativarAQuest = True
+
+
+    def update(self):
+
+        if self.game.bkpfases['fase2'][2]:
+            if self.ativarAQuest:
+                self.questAtiva = True
+                self.ativarAQuest = False
+                self.quest = quest(self.game, (self.rect.x + 13), (self.rect.y - 24), False)
+
+        if self.questAtiva:
+            if self.game.bkpfases['fase2'][3]:
+                self.quest.kill()
+
+#personagem miguel fase 3
+class personagen_miguel(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
         self._layer = GROUND_LAYER
         self.groups = self.game.all_sprites, self.game.fenda3
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.fazendeiro3.get_sprite(0, 32, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.questAtiva = False
+
+        self.ativarAQuest = True
+
+
+
+    def update(self):
+
+        if self.game.bkpfases['fase3'][0]:
+            if self.ativarAQuest:
+                self.questAtiva = True
+                self.ativarAQuest = False
+                self.quest = quest(self.game, (self.rect.x + 13), (self.rect.y - 24), True)
+
+        if self.questAtiva:
+            if not self.game.bkpfases['fase3'][0]:
+                self.quest.kill()
+
+#personagem secundario fase 3
+class personagen_netaMiguel(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites, self.game.fenda3Secundario
         pygame.sprite.Sprite.__init__(self, self.groups)
 
         self.x = x * TILESIZE
@@ -575,24 +896,24 @@ class personagen_aluna(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+
         self.questAtiva = False
 
         self.ativarAQuest = True
 
     def update(self):
 
-        if self.game.bkpfases['fase3'][0]:
+        if self.game.bkpfases['fase3'][2]:
             if self.ativarAQuest:
                 self.questAtiva = True
                 self.ativarAQuest = False
-                self.quest = quest(self.game, (self.rect.x + 13), (self.rect.y - 24))
+                self.quest = quest(self.game, (self.rect.x + 13), (self.rect.y - 24), False)
 
         if self.questAtiva:
-            if not self.game.bkpfases['fase3'][0]:
+            if self.game.bkpfases['fase3'][3]:
                 self.quest.kill()
 
-
-
+#personagem fase 4
 class personagen_professora(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         self.game = game
@@ -614,6 +935,9 @@ class personagen_professora(pygame.sprite.Sprite):
         self.questAtiva = False
 
         self.ativarAQuest = True
+        self.ativarAQuestSecundaria = True
+
+        self.questSecundaria = False
 
     def update(self):
 
@@ -621,15 +945,222 @@ class personagen_professora(pygame.sprite.Sprite):
             if self.ativarAQuest:
                 self.questAtiva = True
                 self.ativarAQuest = False
-                self.quest = quest(self.game, (self.rect.x + 13), (self.rect.x - 24))
+                self.quest = quest(self.game, (self.x + 13), (self.y - 24), True)
+                # self.quest = quest(self.game, 0,0, True)
+
+        if self.game.bkpfases['fase4'][2]:
+            if self.ativarAQuestSecundaria:
+                self.questAtiva = True
+                self.ativarAQuestSecundaria = False
+                self.questSecundaria = True
+                self.quest = quest(self.game, (self.x + 13), (self.y - 24), False)
+                # self.quest = quest(self.game, 0,0, True)
 
         if self.questAtiva:
-            if not self.game.bkpfases['fase4'][0]:
+            if not self.questSecundaria:
+                if not self.game.bkpfases['fase4'][0]:
+                    self.quest.kill()
+            else:
+                if self.game.bkpfases['fase5'][0]:
+                    self.quest.kill()
+
+#personagem fase 5
+class personagen_coveiro(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites, self.game.fenda5
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.coveiro.get_sprite(0, 32, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.questAtiva = False
+
+        self.ativarAQuest = True
+        self.ativarAQuestSecundaria = True
+
+        self.questSecundaria = False
+
+    def update(self):
+
+        if self.game.bkpfases['fase5'][0]:
+            if self.ativarAQuest:
+                self.questAtiva = True
+                self.ativarAQuest = False
+                self.quest = quest(self.game, (self.x + 13), (self.y - 24), True)
+                # self.quest = quest(self.game, 0,0, True)
+
+        if self.game.bkpfases['fase5'][2]:
+            if self.ativarAQuestSecundaria:
+                self.questAtiva = True
+                self.ativarAQuestSecundaria = False
+                self.questSecundaria = True
+                self.quest = quest(self.game, (self.x + 13), (self.y - 24), False)
+                # self.quest = quest(self.game, 0,0, True)
+
+        if self.questAtiva:
+            if not self.questSecundaria:
+                if not self.game.bkpfases['fase5'][0]:
+                    self.quest.kill()
+            else:
+                if self.game.bkpfases['fase6'][0]:
+                    self.quest.kill()
+
+#personagem fase 6
+class personagen_padre2(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites, self.game.fenda6
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.padre.get_sprite(0, 32, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.questAtiva = False
+
+        self.ativarAQuest = True
+        self.ativarAQuestSecundaria = True
+
+        self.questSecundaria = False
+
+    def update(self):
+
+        if self.game.bkpfases['fase6'][0]:
+            if self.ativarAQuest:
+                self.questAtiva = True
+                self.ativarAQuest = False
+                self.quest = quest(self.game, (self.x + 13), (self.y - 24), True)
+                # self.quest = quest(self.game, 0,0, True)
+
+        if self.game.bkpfases['fase6'][2]:
+            if self.ativarAQuestSecundaria:
+                self.questAtiva = True
+                self.ativarAQuestSecundaria = False
+                self.questSecundaria = True
+                self.quest = quest(self.game, (self.x + 13), (self.y - 24), False)
+                # self.quest = quest(self.game, 0,0, True)
+
+        if self.questAtiva:
+            if not self.questSecundaria:
+                if not self.game.bkpfases['fase6'][0]:
+                    self.quest.kill()
+            else:
+                if self.game.bkpfases['fase7'][0]:
+                    self.quest.kill()
+
+#personagem fase 7
+class personagen_prefeito(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites, self.game.fenda7
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.prefeito.get_sprite(0, 32, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.questAtiva = False
+
+        self.ativarAQuest = True
+
+        self.ativarAQuestSecundaria = True
+
+        self.questSecundaria = False
+
+    def update(self):
+        if self.game.bkpfases['fase7'][0]:
+            if self.ativarAQuest:
+                self.questAtiva = True
+                self.ativarAQuest = False
+                self.quest = quest(self.game, (self.x + 13), (self.y - 24), True)
+                # self.quest = quest(self.game, 0,0, True)
+
+        if self.game.bkpfases['fase7'][2]:
+            if self.ativarAQuestSecundaria:
+                self.questAtiva = True
+                self.ativarAQuestSecundaria = False
+                self.questSecundaria = True
+                self.quest = quest(self.game, (self.x + 13), (self.y - 24), False)
+                # self.quest = quest(self.game, 0,0, True)
+
+        if self.questAtiva:
+            if not self.questSecundaria:
+                if not self.game.bkpfases['fase7'][0]:
+                    self.quest.kill()
+            else:
+                if self.game.bkpfases['fase7'][4]:
+                    self.quest.kill()
+
+
+#personagem final
+class personagen_final(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites, self.game.personagenFinal
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x
+        self.y = y
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.indio.get_sprite(0, 32, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.questAtiva = False
+
+        self.ativarAQuest = True
+
+        self.ativarAQuestSecundaria = True
+
+        self.questSecundaria = False
+
+    def update(self):
+        if self.game.questFinal:
+            if self.ativarAQuest:
+                self.questAtiva = True
+                self.ativarAQuest = False
+                self.quest = quest(self.game, (self.x + 13), (self.y - 24), True)
+                # self.quest = quest(self.game, 0,0, True)
+
+
+        if self.questAtiva:
+            if not self.game.questFinal:
                 self.quest.kill()
 
 
 class quest(pygame.sprite.Sprite):
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, p):
         self.game = game
         self._layer = GROUND_LAYER
         self.groups = self.game.all_sprites
@@ -640,7 +1171,13 @@ class quest(pygame.sprite.Sprite):
         self.width = 10
         self.height = 42
 
-        self.image = self.game.img_quest.get_sprite(0, 0, self.width, self.height)
+        self.p = p
+
+        if self.p:
+            self.image = self.game.img_quest.get_sprite(0, 0, self.width, self.height)
+        else:
+            self.image = self.game.img_questSecundaria.get_sprite(0, 0, self.width, self.height)
+
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
@@ -669,12 +1206,14 @@ class quest(pygame.sprite.Sprite):
 
 class Dialogo(pygame.sprite.Sprite):
 
-    def __init__(self, game, x, y, dialogo, p):
+    def __init__(self, game, x, y, dialogo, personagem):
 
         self.game = game
         self._layer = TEXT_LAYER
         self.groups = self.game.all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.nomePersonagem = personagem
 
         self.width = 570
         self.height = 100
@@ -690,13 +1229,44 @@ class Dialogo(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
-        self.p = p
 
         pygame.font.init()
 
-        self.font = pygame.font.Font("assets/font/HungryCharlie-Serif.ttf", 20)
-        self.render = self.font.render(dialogo, False, (24, 25, 26))
+        self.font = pygame.font.Font("font/NORTHFOREST.ttf", 20)
+
+
+        self.dialogo = dialogo
+        self.posisaoTexto = 30
+
+        self.posisaoTexto1 = 10
+
+        self.falaReender =  ""
+        self.falaDitas = 1
+
+        self.cont = 0
+
+
+        self.dialogo = self.dialogo.split("/")
+
+        self.qtdFalas = len(self.dialogo)
+
+        self.render = self.font.render(self.nomePersonagem + " :", False, (24, 25, 26))
         self.image.blit(self.render, (10, 10))
+
+        if self.qtdFalas >= 2:
+            while self.falaDitas <= self.qtdFalas:
+
+                self.falaReender = str(self.dialogo[self.cont])
+
+                self.render = self.font.render(self.falaReender, False, (24, 25, 26))
+                self.image.blit(self.render, (self.posisaoTexto1, self.posisaoTexto))
+
+                self.cont += 1
+                self.posisaoTexto += 15
+                self.falaDitas += 1
+        else:
+            self.render = self.font.render(self.dialogo[self.cont], False, (24, 25, 26))
+            self.image.blit(self.render, (10, 30))
 
 
 ######## Blocos do mapa #############
@@ -1937,6 +2507,7 @@ class Player_platform(pygame.sprite.Sprite):
                     self.audio_morte.play()
                     self.audio_morte.set_volume(self.volumeMusic)
                     self.kill()
+                    self.game.restartFase = True
                 else:
                     self.invulneravel = True
                     self.audio_perderVida.play()
@@ -1951,6 +2522,7 @@ class Player_platform(pygame.sprite.Sprite):
                 self.audio_morte.play()
                 self.audio_morte.set_volume(self.volumeMusic)
                 self.kill()
+                self.game.restartFase = True
             else:
                 self.invulneravel = True
                 self.audio_perderVida.play()
@@ -1992,8 +2564,8 @@ class Player_platform(pygame.sprite.Sprite):
         if hits:
             self.game.voltarFase = True
             self.game.reentradaFase = True
+            self.game.faseFinalizada = True
             #self.game.bkpfases[self.game.faseIniciar][3] = self.cristaiscoletados
-
 
 
 class Text:
@@ -2003,7 +2575,7 @@ class Text:
         self._layer = TEXT_LAYER
         self.image = pygame.image.load(img)
 
-        self.font = pygame.font.Font("assets/font/HungryCharlie-Serif.ttf", size)
+        self.font = pygame.font.Font("font/HungryCharlie-Serif.ttf", size)
         self.render = self.font.render(text, False, (255, 255, 255))
 
     def draw(self, window, x, y):
@@ -2013,3 +2585,173 @@ class Text:
 
     def text_update(self, text):
         self.render = self.font.render(text, False, (255, 255, 255))
+
+###################### CENAS ########################
+
+
+class primeiraCena(pygame.sprite.Sprite):
+    def __init__(self, game, x, y, img):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.img = img
+        self.image = pygame.image.load(self.img)
+        self.rect = self.image.get_rect()
+        self.rect[0] = x
+        self.rect[1] = y
+
+        self.x = x
+        self.y = y
+
+        self.dialogoMultiplo = True
+
+        self.falaAtiva = True
+
+        self.tempoFala = 300
+
+        self.falasDitas = 0
+
+        self.nomePersonagem = ""
+
+
+    def update(self):
+
+        if self.dialogoMultiplo:
+
+            if self.falasDitas >= len(dialogoSenhoresDoTempo):
+                self.dialogoCaixaFalas.kill()
+                self.dialogoMultiplo = False
+                self.falasDitas = 0
+                self.game.passarCena = False
+            else:
+                if self.tempoFala >= 0:
+                    if self.falaAtiva:
+                        if self.falasDitas == 0 or self.falasDitas == 6 or self.falasDitas == 10:
+                            self.nomePersonagem = '753'
+                        elif self.falasDitas == 4 or self.falasDitas == 9 or self.falasDitas == 11:
+                            self.nomePersonagem = '159'
+
+                        self.dialogoCaixaFalas = Dialogo(self.game, (self.x + 335), (self.y + 500),
+                                                         dialogoSenhoresDoTempo[self.falasDitas], self.nomePersonagem)
+                        self.falaAtiva = False
+                    self.tempoFala -= 1
+                else:
+                    self.dialogoCaixaFalas.kill()
+                    self.tempoFala = 300
+                    self.falasDitas += 1
+                    self.falaAtiva = True
+
+class segundaCena(pygame.sprite.Sprite):
+    def __init__(self, game, x, y, img):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.img = img
+        self.image = pygame.image.load(self.img)
+        self.rect = self.image.get_rect()
+        self.rect[0] = x
+        self.rect[1] = y
+
+        self.x = x
+        self.y = y
+
+        self.dialogoMultiplo = True
+
+        self.falaAtiva = True
+
+        self.tempoFala = 300
+
+        self.falasDitas = 0
+
+        self.nomePersonagem = ""
+
+
+    def update(self):
+
+        if self.dialogoMultiplo:
+
+            if self.falasDitas >= len(dialogoSenhorDoTempoEestagiario):
+                self.dialogoCaixaFalas.kill()
+                self.dialogoMultiplo = False
+                self.falasDitas = 0
+                self.game.passarCena = False
+            else:
+                if self.tempoFala >= 0:
+                    if self.falaAtiva:
+                        self.nomePersonagem = 'Senhor do Tempo'
+
+                        self.dialogoCaixaFalas = Dialogo(self.game, (self.x + 270), (self.y + 550),
+                                                         dialogoSenhorDoTempoEestagiario[self.falasDitas], self.nomePersonagem)
+                        self.falaAtiva = False
+                    self.tempoFala -= 1
+                else:
+                    self.dialogoCaixaFalas.kill()
+                    self.tempoFala = 400
+                    self.falasDitas += 1
+                    self.falaAtiva = True
+
+class terceiraCena(pygame.sprite.Sprite):
+    def __init__(self, game, x, y, img):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.img = img
+        self.image = pygame.image.load(self.img)
+        self.rect = self.image.get_rect()
+        self.rect[0] = x
+        self.rect[1] = y
+
+        self.x = x
+        self.y = y
+
+        self.dialogoMultiplo = True
+
+        self.falaAtiva = True
+
+        self.tempoFala = 300
+
+        self.falasDitas = 0
+
+        self.nomePersonagem = ""
+
+
+    def update(self):
+
+        if self.dialogoMultiplo:
+
+            if self.falasDitas >= len(dialogoFinal):
+                self.dialogoCaixaFalas.kill()
+                self.dialogoMultiplo = False
+                self.falasDitas = 0
+                self.game.passarCena = False
+
+                self.image = pygame.image.load("assets/cenas/cena7.jpeg")
+            else:
+                if self.tempoFala >= 0:
+                    if self.falaAtiva:
+                        self.nomePersonagem = 'Narrador'
+
+                        if self.falasDitas == 2:
+                            self.image = pygame.image.load("assets/cenas/cena4.jpeg")
+
+                        if self.falasDitas == 3:
+                            self.image = pygame.image.load("assets/cenas/cena5.jpeg")
+
+                        if self.falasDitas == 4:
+                            self.image = pygame.image.load("assets/cenas/cena6.png")
+
+                        self.dialogoCaixaFalas = Dialogo(self.game, (self.x + 270), (self.y + 550),
+                                                         dialogoFinal[self.falasDitas], self.nomePersonagem)
+                        self.falaAtiva = False
+                    self.tempoFala -= 1
+                else:
+                    self.dialogoCaixaFalas.kill()
+                    self.tempoFala = 400
+                    self.falasDitas += 1
+                    self.falaAtiva = True

@@ -15,13 +15,26 @@ from fase4 import *
 from fase5 import *
 from fase6 import *
 from fase7 import *
+from cena1 import *
+from cena2 import *
+from cena3 import *
 from game import Game
 from config import *
 
+import shutil
 
 class Main:
 
     def __init__(self):
+
+        self.pastaFile = "assets"
+
+        # codigo para descompactar assets usados
+        filename = "assets.zip"
+        extract_dir = "./"
+        archive_format = "zip"
+
+        shutil.unpack_archive(filename, extract_dir, archive_format)
 
         self.window = pygame.display.set_mode([WIN_WIDTH, WIN_HEIGHT])
         self.title = pygame.display.set_caption("What If?")
@@ -29,6 +42,9 @@ class Main:
         self.loop = True
         self.fps = pygame.time.Clock()
 
+        self.cena1 = Cena1()
+        self.cena2 = Cena2()
+        self.cena3 = Cena3()
         self.game = Game()
         self.fase1 = Fase1()
         self.fase2 = Fase2()
@@ -48,7 +64,31 @@ class Main:
 
             self.fase1.voltarFase, self.fase2.voltarFase,self.fase3.voltarFase,self.fase4.voltarFase,self.fase5.voltarFase,self.fase6.voltarFase,self.fase7.voltarFase = False, False, False, False, False, False, False
 
-            print("aqui")
+
+        #fases finalizada
+
+        if self.fase1.faseFinalizada:
+            self.game.bkpfases['fase1'][2] = True
+            self.fase1.faseFinalizada = False
+        if self.fase2.faseFinalizada:
+            self.game.bkpfases['fase2'][2] = True
+            self.fase2.faseFinalizada = False
+        if self.fase3.faseFinalizada:
+            self.game.bkpfases['fase3'][2] = True
+            self.fase3.faseFinalizada = False
+        if self.fase4.faseFinalizada:
+            self.game.bkpfases['fase4'][2] = True
+            self.fase4.faseFinalizada = False
+        if self.fase5.faseFinalizada:
+            self.game.bkpfases['fase5'][2] = True
+            self.fase5.faseFinalizada = False
+        if self.fase6.faseFinalizada:
+            self.game.bkpfases['fase6'][2] = True
+            self.fase6.faseFinalizada = False
+        if self.fase7.faseFinalizada:
+            self.game.bkpfases['fase7'][2] = True
+            self.fase7.faseFinalizada = False
+
 
         #restart fases
         if self.fase1.restartFase:
@@ -93,91 +133,101 @@ class Main:
 
 
         #entar na fase
-        if self.game.fases[0]:
-            self.game.draw(self.window)
-            self.game.update()
-        elif self.game.fases[1]:
+        if self.cena1.passarCena:
+            self.cena1.draw(self.window)
+            self.cena1.update()
+        else:
+            self.cena2.draw(self.window)
+            self.cena2.update()
 
+        if not self.cena2.passarCena :
+            if self.game.fases[0]:
+                self.game.draw(self.window)
+                self.game.update()
+            elif self.game.fases[1]:
 
-            if self.fase1.reentradaFase:
-                self.fase1 = Fase1()
-                self.fase1.reentradaFase = False
+                if self.fase1.reentradaFase:
+                    self.fase1 = Fase1()
+                    self.fase1.reentradaFase = False
 
-            self.window.fill((31, 141, 224))
-            self.fase1.draw(self.window)
-            self.fase1.update()
-        elif self.game.fases[2]:
-            if self.game.fase2:
-                self.fase2 = Fase2()
-                self.game.fase2 = False
-            if self.fase2.reentradaFase:
-                self.fase2 = Fase2()
-                self.fase2.reentradaFase = False
+                self.window.fill((31, 141, 224))
+                self.fase1.draw(self.window)
+                self.fase1.update()
+            elif self.game.fases[2]:
+                if self.game.fase2:
+                    self.fase2 = Fase2()
+                    self.game.fase2 = False
+                if self.fase2.reentradaFase:
+                    self.fase2 = Fase2()
+                    self.fase2.reentradaFase = False
 
-            self.window.fill((113, 108, 205))
-            self.fase2.draw(self.window)
-            self.fase2.update()
-        elif self.game.fases[3]:
+                self.window.fill((113, 108, 205))
+                self.fase2.draw(self.window)
+                self.fase2.update()
+            elif self.game.fases[3]:
 
-            if self.game.fase3:
-                self.fase3 = Fase3()
-                self.game.fase3 = False
-            if self.fase3.reentradaFase:
-                self.fase3 = Fase3()
-                self.fase3.reentradaFase = False
+                if self.game.fase3:
+                    self.fase3 = Fase3()
+                    self.game.fase3 = False
+                if self.fase3.reentradaFase:
+                    self.fase3 = Fase3()
+                    self.fase3.reentradaFase = False
 
-            self.window.fill((31, 141, 224))
-            self.fase3.draw(self.window)
-            self.fase3.update()
-        elif self.game.fases[4]:
+                self.window.fill((31, 141, 224))
+                self.fase3.draw(self.window)
+                self.fase3.update()
+            elif self.game.fases[4]:
 
-            if self.game.fase4:
-                self.fase4 = Fase4()
-                self.game.fase4 = False
-            if self.fase4.reentradaFase:
-                self.fase4 = Fase4()
-                self.fase4.reentradaFase = False
+                if self.game.fase4:
+                    self.fase4 = Fase4()
+                    self.game.fase4 = False
+                if self.fase4.reentradaFase:
+                    self.fase4 = Fase4()
+                    self.fase4.reentradaFase = False
 
-            self.window.fill((31, 141, 224))
-            self.fase4.draw(self.window)
-            self.fase4.update()
-        elif self.game.fases[5]:
+                self.window.fill((31, 141, 224))
+                self.fase4.draw(self.window)
+                self.fase4.update()
+            elif self.game.fases[5]:
 
-            if self.game.fase5:
-                self.fase5 = Fase5()
-                self.game.fase5 = False
-            if self.fase5.reentradaFase:
-                self.fase5 = Fase5()
-                self.fase5.reentradaFase = False
+                if self.game.fase5:
+                    self.fase5 = Fase5()
+                    self.game.fase5 = False
+                if self.fase5.reentradaFase:
+                    self.fase5 = Fase5()
+                    self.fase5.reentradaFase = False
 
-            self.window.fill((113, 108, 205))
-            self.fase5.draw(self.window)
-            self.fase5.update()
-        elif self.game.fases[6]:
+                self.window.fill((113, 108, 205))
+                self.fase5.draw(self.window)
+                self.fase5.update()
+            elif self.game.fases[6]:
 
-            if self.game.fase6:
-                self.fase6 = Fase6()
-                self.game.fase6 = False
-            if self.fase6.reentradaFase:
-                self.fase6 = Fase6()
-                self.fase6.reentradaFase = False
+                if self.game.fase6:
+                    self.fase6 = Fase6()
+                    self.game.fase6 = False
+                if self.fase6.reentradaFase:
+                    self.fase6 = Fase6()
+                    self.fase6.reentradaFase = False
 
-            self.window.fill((31, 141, 224))
-            self.fase6.draw(self.window)
-            self.fase6.update()
-        elif self.game.fases[7]:
+                self.window.fill((31, 141, 224))
+                self.fase6.draw(self.window)
+                self.fase6.update()
+            elif self.game.fases[7]:
 
-            if self.game.fase7:
-                self.fase7 = Fase7()
-                self.game.fase7 = False
-            if self.fase7.reentradaFase:
-                self.fase7 = Fase7()
-                self.fase7.reentradaFase = False
+                if self.game.fase7:
+                    self.fase7 = Fase7()
+                    self.game.fase7 = False
+                if self.fase7.reentradaFase:
+                    self.fase7 = Fase7()
+                    self.fase7.reentradaFase = False
 
-            self.window.fill((31, 141, 224))
-            self.fase7.draw(self.window)
-            self.fase7.update()
+                self.window.fill((31, 141, 224))
+                self.fase7.draw(self.window)
+                self.fase7.update()
+            elif self.game.fases[8]:
 
+                self.cena3.draw(self.window)
+                self.cena3.update()
 
 
 
@@ -199,5 +249,12 @@ class Main:
             self.draw()
             self.events()
             pygame.display.update()
+
+        # deleta pasta de assets
+        if not self.loop:
+            try:
+                shutil.rmtree(self.pastaFile, ignore_errors=False, onerror=None)
+            except OSError as e:
+                print("Error: %s - %s." % (e.filename, e.strerror))
 
 Main().update()
